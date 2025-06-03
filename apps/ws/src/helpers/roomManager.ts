@@ -1,4 +1,4 @@
-import { User } from "../types/types";
+import { JWT_Payload, User } from "../types/types";
 
 export function getUsersInRoom(users: User[], roomId: string) {
     let usersInRoom: User[] = [];
@@ -25,3 +25,16 @@ export const broadcastUserList = (users: User[], roomId: string) => {
         )
     );
 };
+
+export const broadcastShape = (usersInRoom: User[], shape: JSON, roomId: string, currentUser: JWT_Payload) => {
+    usersInRoom.forEach((user) => {
+        user.socket.send(JSON.stringify({
+            type: "draw_shape",
+            payload: {
+                roomId: roomId,
+                shape,
+                sender: currentUser
+            }
+        }))
+    })
+}

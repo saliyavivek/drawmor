@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import MainCanvas from "./MainCanvas";
 import { SocketCanvasProps } from "@/types/types";
+import { toast } from "sonner";
 
 export default function SocketCanvas({
   roomId,
@@ -34,25 +35,20 @@ export default function SocketCanvas({
     ws.addEventListener("message", (ev) => {
       const message = JSON.parse(ev.data);
 
-      // if (message.type === "draw_shape") {
-      //   console.log(message);
-      // }
-
       if (message.type === "user_list") {
         const users = message.payload.users;
-        setUserCount(users.count);
+        setUserCount(users.length);
       }
 
-      // if (message.type === "leave") {
-      //   toast(`${message.payload.userLeft} left the room.`);
-      // }
+      if (message.type === "leave") {
+        toast(`${message.payload.userLeft} left the room.`);
+      }
 
-      // if (message.type === "join") {
-      //   console.log(message.payload.userJoined + " " + currUserName);
-      //   toast(
-      //     `${message.payload.userJoined == currUserName ? "You" : message.payload.userJoined} joined the room.`
-      //   );
-      // }
+      if (message.type === "join") {
+        toast(
+          `${message.payload.userJoined == currUserName ? "You" : message.payload.userJoined} joined the room.`
+        );
+      }
     });
 
     ws.onclose = () => {
