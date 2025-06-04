@@ -14,13 +14,13 @@ export default function MainCanvas({
   roomId,
   socket,
   slug,
-  userCount,
+  users,
 }: MainCanvasProps) {
   const canvasRef = useRef(null);
   const userId = useAtomValue(userIdAtom);
   const router = useRouter();
 
-  const [selectedTool, setSelectedTool] = useState<Tool>("lock");
+  const [selectedTool, setSelectedTool] = useState<Tool>("rectangle");
 
   const selectedToolRef = useRef(selectedTool);
   selectedToolRef.current = selectedTool;
@@ -50,18 +50,17 @@ export default function MainCanvas({
   } else {
     return (
       <div>
-        <CanvasHeader
-          slug={slug}
-          userCount={userCount}
-          handleLeave={handleLeave}
-        />
+        <CanvasHeader slug={slug} users={users} handleLeave={handleLeave} />
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <DrawingToolbar
             selectedTool={selectedTool}
             onToolChange={setSelectedTool}
           />
         </div>
-        <canvas ref={canvasRef} className="border cursor-crosshair" />
+        <canvas
+          ref={canvasRef}
+          className="border h-screen overflow-hidden cursor-crosshair"
+        />
       </div>
     );
   }

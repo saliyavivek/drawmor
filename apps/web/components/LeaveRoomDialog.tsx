@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
 import {
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,13 +16,16 @@ export default function LeaveRoomDialog({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Are you sure you want to leave?</DialogTitle>
+        <DialogTitle>Leaving so soon?</DialogTitle>
         <DialogDescription>
           Don't worry, you can rejoin anytime using the canvas name. Your
           drawings are safe.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Cancel</Button>
+        </DialogClose>
         <Button onClick={handleLeave}>Confirm</Button>
       </DialogFooter>
     </DialogContent>

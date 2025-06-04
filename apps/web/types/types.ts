@@ -29,23 +29,13 @@ export interface MainCanvasProps {
     roomId: string,
     socket: WebSocket,
     slug: string,
-    userCount: number,
+    users: string[],
 }
 
 export type Tool =
-    | "lock"
-    | "hand"
-    | "select"
     | "rectangle"
-    | "diamond"
     | "circle"
-    | "arrow"
     | "line"
-    | "pencil"
-    | "text"
-    | "image"
-    | "eraser"
-    | "collaborate";
 
 export type RectangleShape = {
     type: "rectangle";
@@ -62,11 +52,6 @@ export type CircleShape = {
     radius: number;
 };
 
-export type PencilShape = {
-    type: "pencil";
-    points: { x: number; y: number }[];
-}
-
 export type LineShape = {
     type: "line",
     startX: number;
@@ -75,7 +60,7 @@ export type LineShape = {
     endY: number;
 }
 
-export type Shape = RectangleShape | CircleShape | LineShape | PencilShape;
+export type Shape = RectangleShape | CircleShape | LineShape;
 
 export type DrawingOptions = {
     stroke?: string;
@@ -84,3 +69,9 @@ export type DrawingOptions = {
     bowing?: number;
     strokeLineDash?: number[];
 };
+
+export interface CanvasHeaderProps {
+    slug: string;
+    users: any[];
+    handleLeave: () => void;
+}

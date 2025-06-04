@@ -14,6 +14,6 @@ export const authSchema = z.object({
 
 export const roomSchema = z.object({
     name: z.string()
-        .min(2, "Room name must be at least 3 characters")
-        .max(20, "Room name must be at most 10 characters"),
+        .min(3, "Canvas name must be at least 3 characters")
+        .max(20, "Canvas name must be at most 10 characters"),
 })

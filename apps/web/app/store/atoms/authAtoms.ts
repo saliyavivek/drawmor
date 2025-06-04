@@ -38,3 +38,8 @@ export const nameAtom = atom((get) => {
 export const loginAtom = atom(null, (get, set, token: string) => {
     set(tokenAtom, token);
 });
+
+// Logout atom (Write-only)
+export const logoutAtom = atom(null, (_get, set) => {
+    set(tokenAtom, null); // This clears it from atom + localStorage
+});

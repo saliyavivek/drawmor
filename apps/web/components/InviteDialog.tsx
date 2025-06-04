@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 
-export function ShareDialog({
+export function InviteDialog({
   handleCopyLink,
 }: {
   handleCopyLink: () => void;
@@ -19,9 +19,9 @@ export function ShareDialog({
   return (
     <DialogContent className="sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>Share link</DialogTitle>
+        <DialogTitle>Invite people to collaborate</DialogTitle>
         <DialogDescription>
-          Anyone who has this link will be able to view this.
+          Share this link with others and enjoy creating together in real time.
         </DialogDescription>
       </DialogHeader>
 
@@ -43,6 +43,7 @@ export function ShareDialog({
           type="submit"
           size="sm"
           className="px-3"
+          variant="outline"
         >
           <span className="sr-only">Copy</span>
           <Copy />
@@ -51,7 +52,7 @@ export function ShareDialog({
 
       <DialogFooter className="sm:justify-start">
         <DialogClose asChild>
-          <Button type="button" variant="secondary">
+          <Button type="button" variant="outline">
             Close
           </Button>
         </DialogClose>

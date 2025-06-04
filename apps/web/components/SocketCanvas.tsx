@@ -12,7 +12,7 @@ export default function SocketCanvas({
 }: SocketCanvasProps) {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [userCount, setUserCount] = useState(0);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const ws = new WebSocket(
@@ -37,7 +37,7 @@ export default function SocketCanvas({
 
       if (message.type === "user_list") {
         const users = message.payload.users;
-        setUserCount(users.length);
+        setUsers(users);
       }
 
       if (message.type === "leave") {
@@ -79,7 +79,7 @@ export default function SocketCanvas({
         roomId={roomId}
         socket={socketRef.current}
         slug={slug}
-        userCount={userCount}
+        users={users}
       />
     </div>
   );

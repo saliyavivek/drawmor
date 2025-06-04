@@ -25,8 +25,8 @@ export function createCircleShape(centerX: number, centerY: number, endX: number
 export function createLineShape(startX: number, startY: number, endX: number, endY: number): Shape {
     return {
         type: "line",
-        startX: Math.min(startX, endX),
-        startY: Math.min(startY, endY),
+        startX,
+        startY,
         endX,
         endY
     }

@@ -6,21 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Lock,
-  Hand,
-  MousePointer,
-  Square,
-  Diamond,
-  Circle,
-  ArrowRight,
-  Minus,
-  Pencil,
-  Type,
-  ImageIcon,
-  Eraser,
-  Users,
-} from "lucide-react";
+import { Square, Circle, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tool } from "@/types/types";
 
@@ -36,31 +22,13 @@ export default function DrawingToolbar({
   className,
 }: DrawingToolbarProps) {
   const tools = [
-    { id: "lock" as Tool, icon: Lock, label: "Lock/Unlock" },
-    { id: "hand" as Tool, icon: Hand, label: "Hand Tool" },
-    {
-      id: "select" as Tool,
-      icon: MousePointer,
-      label: "Selection Tool",
-    },
     {
       id: "rectangle" as Tool,
       icon: Square,
       label: "Rectangle",
     },
-    { id: "diamond" as Tool, icon: Diamond, label: "Diamond" },
     { id: "circle" as Tool, icon: Circle, label: "Circle" },
-    { id: "arrow" as Tool, icon: ArrowRight, label: "Arrow" },
     { id: "line" as Tool, icon: Minus, label: "Line" },
-    { id: "pencil" as Tool, icon: Pencil, label: "Pencil" },
-    { id: "text" as Tool, icon: Type, label: "Text" },
-    { id: "image" as Tool, icon: ImageIcon, label: "Image" },
-    { id: "eraser" as Tool, icon: Eraser, label: "Eraser" },
-    {
-      id: "collaborate" as Tool,
-      icon: Users,
-      label: "Collaborate",
-    },
   ];
 
   return (

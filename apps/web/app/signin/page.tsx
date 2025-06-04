@@ -7,6 +7,7 @@ import AuthForm from "@/components/AuthForm";
 import axios from "axios";
 import { loginAtom } from "../store/atoms/authAtoms";
 import { useSetAtom } from "jotai";
+import { toast } from "sonner";
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +32,7 @@ export default function SignInPage() {
         login(responseData.token);
       }
       router.push("/canvas");
+      toast("Logged in.");
     } catch (error) {
       alert("Error while signing in.");
     } finally {
