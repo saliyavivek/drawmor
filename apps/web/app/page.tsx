@@ -1,120 +1,230 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAtomValue, useSetAtom } from "jotai";
-import { CircleIcon, Share2Icon, UsersIcon } from "lucide-react";
+import { CircleIcon, Share2Icon, UsersIcon, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function Home() {
   const router = useRouter();
   const isLoggedIn = useAtomValue(userAtom);
   const link = isLoggedIn ? "/canvas" : "/signin";
   const logout = useSetAtom(logoutAtom);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout(); // Clear the token
     toast("Logged out.");
   };
 
+  const NavigationButtons = () => (
+    <>
+      {isLoggedIn ? (
+        <>
+          <Button
+            onClick={() => {
+              router.push("/canvas");
+              setIsMobileMenuOpen(false);
+            }}
+            className="w-full sm:w-auto"
+          >
+            Get Started
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="w-full sm:w-auto"
+          >
+            Log out
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="outline"
+            onClick={() => {
+              router.push("/signin");
+              setIsMobileMenuOpen(false);
+            }}
+            className="w-full sm:w-auto"
+          >
+            Sign in
+          </Button>
+          <Button
+            onClick={() => {
+              router.push("/signup");
+              setIsMobileMenuOpen(false);
+            }}
+            className="w-full sm:w-auto"
+          >
+            Sign up
+          </Button>
+        </>
+      )}
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-background px-15">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="border-b">
+      <nav className="border-b sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
               src="/logo_colored.png"
               alt="Drawmor Logo"
-              className="h-8 w-auto"
-              width={20}
-              height={20}
+              className="h-6 w-6 sm:h-8 sm:w-8"
+              width={32}
+              height={32}
             />
-            <span className="font-semibold text-xl">Drawmor</span>
+            <span className="font-semibold text-lg sm:text-xl">Drawmor</span>
           </div>
-          <div className="flex gap-4">
-            {isLoggedIn ? (
-              <>
-                <Button
-                  onClick={() => {
-                    router.push("/canvas");
-                  }}
-                >
-                  Get Started
-                </Button>
-                <Button variant="outline" onClick={handleLogout}>
-                  Log out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/signin")}
-                >
-                  Sign in
-                </Button>
-                <Button onClick={() => router.push("/signup")}>Sign up</Button>
-              </>
-            )}
+
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex gap-3 md:gap-4">
+            <NavigationButtons />
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="sm:hidden p-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Menu className="cursor-pointer" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="m-1">
+                {isLoggedIn && (
+                  <>
+                    <DropdownMenuLabel>{isLoggedIn.username}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                {isLoggedIn ? (
+                  <>
+                    <DropdownMenuItem>
+                      <p
+                        onClick={() => {
+                          router.push("/canvas");
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full"
+                      >
+                        Get Started
+                      </p>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <p onClick={handleLogout} className="w-full sm:w-auto">
+                        Log out
+                      </p>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem>
+                      <p
+                        className="w-full"
+                        onClick={() => {
+                          router.push("/signin");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Sign in
+                      </p>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <p
+                        className="w-full"
+                        onClick={() => {
+                          router.push("/signup");
+                          setIsMobileMenuOpen(false);
+                        }}
+                      >
+                        Sign up
+                      </p>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-24 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24 text-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
           Collaborate and Create
-          <span className="text-primary block">
+          <span className="text-primary block mt-2">
             Beautiful Drawings Together
           </span>
         </h1>
-        <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8">
+        <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
           Experience the joy of real-time collaborative drawing. Create, share,
           and bring your ideas to life with Drawmor&apos;s intuitive canvas.
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
           <Button
             size="lg"
             onClick={() => {
               router.push(link);
             }}
+            className="w-full sm:w-auto min-w-[180px]"
           >
             Start Drawing Now
           </Button>
-          <Button size="lg" variant="outline">
-            Watch Demo
-          </Button>
+          {isLoggedIn && (
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto min-w-[140px]"
+              onClick={handleLogout}
+            >
+              Log out
+            </Button>
+          )}
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="grid md:grid-cols-3 gap-8">
-          <Card className="p-6">
-            <Share2Icon className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-semibold mb-2">
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <Card className="p-4 sm:p-6 text-center md:text-left">
+            <Share2Icon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">
               Real-time Collaboration
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm sm:text-base">
               Draw together in real-time with your team. See changes instantly
               as they happen.
             </p>
           </Card>
-          <Card className="p-6">
-            <UsersIcon className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-semibold mb-2">Easy Sharing</h3>
-            <p className="text-muted-foreground">
+          <Card className="p-4 sm:p-6 text-center md:text-left">
+            <UsersIcon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">
+              Easy Sharing
+            </h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Share your work with a simple link. No accounts required for
               viewers.
             </p>
           </Card>
-          <Card className="p-6">
-            <CircleIcon className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-semibold mb-2">Intuitive Tools</h3>
-            <p className="text-muted-foreground">
+          <Card className="p-4 sm:p-6 text-center md:text-left">
+            <CircleIcon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">
+              Intuitive Tools
+            </h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Simple yet powerful drawing tools that feel natural and
               responsive.
             </p>
@@ -123,18 +233,18 @@ function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-24 text-center">
-        <div className="bg-primary/5 rounded-2xl p-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
+        <div className="bg-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Ready to Start Drawing?
           </h2>
-          <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
             Join thousands of teams who are already creating amazing drawings
             together with Drawmor.
           </p>
           <Button
             size="lg"
-            className="min-w-[200px]"
+            className="w-full sm:w-auto min-w-[200px]"
             onClick={() => {
               isLoggedIn ? router.push("/canvas") : router.push("/signin");
             }}
@@ -146,34 +256,36 @@ function Home() {
 
       {/* Footer */}
       <footer className="border-t">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <img
-                src="/logo_colored.png"
-                alt="Drawmor Logo"
-                className="h-6 w-auto"
-              />
-              <span className="text-sm text-muted-foreground">
-                © 2025 Drawmor. All rights reserved.
-              </span>
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-2">
+              <div className="flex items-center gap-2">
+                <img
+                  src="/logo_colored.png"
+                  alt="Drawmor Logo"
+                  className="h-5 w-5 sm:h-6 sm:w-6"
+                />
+                <span className="text-xs sm:text-sm text-muted-foreground">
+                  © 2025 Drawmor. All rights reserved.
+                </span>
+              </div>
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-4 sm:gap-6">
               <a
                 href="#"
-                className="text-sm text-muted-foreground hover:text-primary"
+                className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Privacy
               </a>
               <a
                 href="#"
-                className="text-sm text-muted-foreground hover:text-primary"
+                className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Terms
               </a>
               <a
                 href="#"
-                className="text-sm text-muted-foreground hover:text-primary"
+                className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 Contact
               </a>

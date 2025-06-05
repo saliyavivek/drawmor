@@ -107,7 +107,7 @@ export default function Page({
   }
 
   if (!roomId) {
-    return <Loader message="Fetching canvas id..." />;
+    return <Loader message="Fetching canvas id..." value={75} />;
   }
 
   if (!currUserName) {

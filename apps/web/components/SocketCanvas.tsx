@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import MainCanvas from "./MainCanvas";
 import { SocketCanvasProps } from "@/types/types";
 import { toast } from "sonner";
+import Loader from "./Loader";
 
 export default function SocketCanvas({
   roomId,
@@ -70,7 +71,7 @@ export default function SocketCanvas({
   }, [roomId]);
 
   if (!isConnected || !socketRef.current) {
-    return <div>Connecting to websocket server...</div>;
+    return <Loader message="Connecting to web socket server..." value={95} />;
   }
 
   return (
