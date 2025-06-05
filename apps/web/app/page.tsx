@@ -7,7 +7,6 @@ import { CircleIcon, Share2Icon, UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
-import Image from "next/image";
 
 function Home() {
   const router = useRouter();
@@ -26,10 +25,12 @@ function Home() {
       <nav className="border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image
+            <img
               src="/logo_colored.png"
               alt="Drawmor Logo"
               className="h-8 w-auto"
+              width={20}
+              height={20}
             />
             <span className="font-semibold text-xl">Drawmor</span>
           </div>
@@ -148,7 +149,7 @@ function Home() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <Image
+              <img
                 src="/logo_colored.png"
                 alt="Drawmor Logo"
                 className="h-6 w-auto"

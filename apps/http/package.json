@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc -b",
     "start": "node ./dist/index.js",
+    "postinstall": "prisma generate --schema=../../packages/db/prisma/schema.prisma",
     "dev": "npm run build && npm run start"
   },
   "devDependencies": {
@@ -14,7 +15,8 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
-    "@types/jsonwebtoken": "^9.0.9"
+    "@types/jsonwebtoken": "^9.0.9",
+    "prisma": "^6.8.2"
   },
   "keywords": [],
   "author": "",

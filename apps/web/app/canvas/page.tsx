@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Users, ArrowRight } from "lucide-react";
-import Image from "next/image";
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -75,10 +74,12 @@ export default function CanvasSelectionPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
-            <Image
+            <img
               src="/logo_colored.png"
               alt="Drawmor Logo"
               className="h-24 w-auto"
+              width={20}
+              height={20}
             />
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
