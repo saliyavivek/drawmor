@@ -18,7 +18,7 @@ export default function LeaveRoomDialog({
       <DialogHeader>
         <DialogTitle>Leaving so soon?</DialogTitle>
         <DialogDescription>
-          Don't worry, you can rejoin anytime using the canvas name. Your
+          Don&apos;t worry, you can rejoin anytime using the canvas name. Your
           drawings are safe.
         </DialogDescription>
       </DialogHeader>

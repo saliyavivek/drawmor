@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Users, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -24,16 +25,18 @@ export default function CanvasSelectionPage() {
   const router = useRouter();
 
   const handleCreateCanvas = async () => {
+    setIsCreating(true);
+
     if (!newSlug.trim()) return;
 
     if (newSlug.length < 3 || newSlug.length > 10) {
       alert(
         "Canvas name should be atleast 3 and atmost of 10 characters long."
       );
+      setIsCreating(false);
       return;
     }
 
-    setIsCreating(true);
     try {
       router.push(`/canvas/${newSlug.trim()}`);
     } catch (error) {
@@ -44,16 +47,18 @@ export default function CanvasSelectionPage() {
   };
 
   const handleJoinCanvas = async () => {
+    setIsJoining(true);
+
     if (!canvasSlug.trim()) return;
 
     if (canvasSlug.length < 3 || canvasSlug.length > 10) {
       alert(
         "Canvas name should be atleast 3 and atmost of 10 characters long."
       );
+      setIsJoining(false);
       return;
     }
 
-    setIsJoining(true);
     try {
       // Navigate to the existing canvas
       router.push(`/canvas/${canvasSlug.trim()}`);
@@ -70,7 +75,7 @@ export default function CanvasSelectionPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
-            <img
+            <Image
               src="/logo_colored.png"
               alt="Drawmor Logo"
               className="h-24 w-auto"

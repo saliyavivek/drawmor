@@ -1,4 +1,4 @@
-import { Copy, LogOut, Palette, Share2, User, Users } from "lucide-react";
+import { Copy, LogOut, User, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger } from "./ui/dialog";
@@ -8,6 +8,7 @@ import LeaveRoomDialog from "./LeaveRoomDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useAtomValue } from "jotai";
 import { nameAtom } from "@/app/store/atoms/authAtoms";
+import Image from "next/image";
 
 export default function CanvasHeader({
   slug,
@@ -31,7 +32,7 @@ export default function CanvasHeader({
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="h-8 w-8 rounded-lg flex items-center justify-center">
-              <img src="/logo_colored.png" alt="Drawmor Logo" />
+              <Image src="/logo_colored.png" alt="Drawmor Logo" />
             </div>
             <div>
               <h1 className="font-semibold">Canvas: {slug}</h1>

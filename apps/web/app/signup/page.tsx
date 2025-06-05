@@ -19,7 +19,7 @@ export default function SignUpPage() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/user/signup",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signup`,
         {
           username: data.username,
           password: data.password,

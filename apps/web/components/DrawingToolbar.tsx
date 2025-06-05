@@ -36,7 +36,7 @@ export default function DrawingToolbar({
       <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-xl shadow-lg p-2">
         <TooltipProvider>
           <div className="flex items-center space-x-1">
-            {tools.map((tool, index) => (
+            {tools.map((tool) => (
               <div key={tool.id} className="flex items-center">
                 <Tooltip>
                   <TooltipTrigger asChild>

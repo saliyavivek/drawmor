@@ -19,7 +19,7 @@ export default function SignInPage() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/user/signin",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signin`,
         {
           username: data.username,
           password: data.password,

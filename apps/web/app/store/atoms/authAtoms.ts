@@ -36,6 +36,7 @@ export const nameAtom = atom((get) => {
 
 //Action atoms (Write-Only)
 export const loginAtom = atom(null, (get, set, token: string) => {
+    //@ts-ignore
     set(tokenAtom, token);
 });
 

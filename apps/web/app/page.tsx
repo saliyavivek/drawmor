@@ -7,6 +7,7 @@ import { CircleIcon, Share2Icon, UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
+import Image from "next/image";
 
 function Home() {
   const router = useRouter();
@@ -25,7 +26,7 @@ function Home() {
       <nav className="border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img
+            <Image
               src="/logo_colored.png"
               alt="Drawmor Logo"
               className="h-8 w-auto"
@@ -71,7 +72,7 @@ function Home() {
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-8">
           Experience the joy of real-time collaborative drawing. Create, share,
-          and bring your ideas to life with Drawmor's intuitive canvas.
+          and bring your ideas to life with Drawmor&apos;s intuitive canvas.
         </p>
         <div className="flex gap-4 justify-center">
           <Button
@@ -147,7 +148,7 @@ function Home() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <img
+              <Image
                 src="/logo_colored.png"
                 alt="Drawmor Logo"
                 className="h-6 w-auto"

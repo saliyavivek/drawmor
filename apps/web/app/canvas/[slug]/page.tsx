@@ -7,7 +7,11 @@ import axios from "axios";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +38,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         setSlug(resolvedSlug);
 
         const response = await axios.get(
-          `http://localhost:3001/api/canvas/${resolvedSlug}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${resolvedSlug}`
         );
         const data = response.data;
 
@@ -59,7 +63,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           }
 
           const createResponse = await axios.post(
-            "http://localhost:3001/api/canvas",
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas`,
             { name: resolvedSlug },
             {
               headers: {
@@ -79,8 +83,8 @@ export default function Page({ params }: { params: { slug: string } }) {
           setValue(100);
         }
       } catch (e) {
-        console.error("Room error:", e);
-        setError(e.response.data.errors);
+        console.error("Something went wrong:", e);
+        // setError(e.response.data.errors);
       } finally {
         await delay(300); // show 100% for a brief moment
         setLoading(false);

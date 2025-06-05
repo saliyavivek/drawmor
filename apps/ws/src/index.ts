@@ -6,7 +6,7 @@ import { validateUser } from "./utils/validate";
 import { User } from "./types/types";
 import { handleDrawShape, handleJoin, handleMessage, leaveRoom } from "./helpers/handlers";
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: Number(process.env.PORT) });
 
 let users: User[] = [];
 
@@ -51,4 +51,4 @@ wss.on("connection", (socket, request) => {
     });
 })
 
-console.log("web socket server listening to port 8080.");
+console.log(`web socket server listening to port ${process.env.PORT}.`);

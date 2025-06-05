@@ -16,7 +16,7 @@ export default function SocketCanvas({
 
   useEffect(() => {
     const ws = new WebSocket(
-      `ws://localhost:8080?token=${localStorage.getItem("token")}`
+      `${process.env.NEXT_PUBLIC_WS_URL}?token=${localStorage.getItem("token")}`
     );
 
     ws.onopen = () => {
