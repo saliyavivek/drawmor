@@ -24,4 +24,8 @@ app.use(cors({
 app.use("/api/user", userRouter);
 app.use("/api/canvas", canvasRouter);
 
+app.get("/ping", (req, res) => {
+    res.status(200).send("pong");
+});
+
 app.listen(PORT, () => console.log(`Server listening to port ${PORT}`));

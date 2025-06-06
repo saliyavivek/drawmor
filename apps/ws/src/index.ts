@@ -1,14 +1,26 @@
 import dotenv from "dotenv"
 dotenv.config();
 
+import express from "express";
 import { WebSocketServer } from "ws";
 import { validateUser } from "./utils/validate";
 import { User } from "./types/types";
 import { handleDrawShape, handleJoin, handleMessage, leaveRoom } from "./helpers/handlers";
 
-const wss = new WebSocketServer({ port: Number(process.env.PORT) });
+const app = express();
+const PORT = Number(process.env.PORT) || 8080;
+
+const server = app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+});
+
+const wss = new WebSocketServer({ server });
 
 let users: User[] = [];
+
+app.get("/ping", (req, res) => {
+    res.status(200).send("pong");
+});
 
 wss.on("connection", (socket, request) => {
     const url = request.url;
