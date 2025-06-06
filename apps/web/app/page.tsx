@@ -224,8 +224,7 @@ function Home() {
               Easy Sharing
             </h3>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Share your work with a simple link. No accounts required for
-              viewers.
+              Share your work with a simple link.
             </p>
           </Card>
           <Card className="p-4 sm:p-6 text-center md:text-left">
@@ -282,7 +281,7 @@ function Home() {
             <div className="text-xs sm:text-sm text-muted-foreground">
               <a
                 href="https://github.com/saliyavivek/drawmor"
-                className="flex gap-2 items-center"
+                className="flex gap-2 items-center hover:text-black"
               >
                 <span className="font-medium">Source Code</span>
                 <Github className="h-5 w-auto" />

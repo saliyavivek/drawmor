@@ -3,6 +3,7 @@
 import { nameAtom } from "@/app/store/atoms/authAtoms";
 import Loader from "@/components/Loader";
 import SocketCanvas from "@/components/SocketCanvas";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ export default function Page({
   const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const delay = (ms: number) =>
@@ -55,7 +57,6 @@ export default function Page({
 
           setLoadingMessage("Creating new canvas...");
           setValue(45);
-          const token = localStorage.getItem("token");
 
           if (!token) {
             setError("Authentication token not found.");
@@ -94,14 +95,17 @@ export default function Page({
     initializeRoom();
   }, [params]);
 
-  if (loading) {
-    return <Loader message={loadingMessage} value={value} />;
-  }
-
-  if (error) {
+  if (!token) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
-        <p className="text-red-600 text-lg font-medium">Error: {error}</p>
+        <p className="text-red-600 text-lg font-medium">
+          Please log in or create an account to access this canvas.
+        </p>
+        <p className="text-xs sm:text-sm text-gray">
+          <a href="/" className="hover:underline">
+            Back to home
+          </a>
+        </p>
       </div>
     );
   }
@@ -111,7 +115,15 @@ export default function Page({
   }
 
   if (!currUserName) {
-    return <Loader message="Fetching user's name..." value={75} />;
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
+        <p className="text-red-600 text-lg font-medium"></p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <Loader message={loadingMessage} value={value} />;
   }
 
   return (
