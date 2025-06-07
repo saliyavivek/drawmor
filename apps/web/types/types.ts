@@ -36,6 +36,7 @@ export type Tool =
     | "rectangle"
     | "circle"
     | "line"
+    | "pencil"
 
 export type RectangleShape = {
     type: "rectangle";
@@ -60,7 +61,12 @@ export type LineShape = {
     endY: number;
 }
 
-export type Shape = RectangleShape | CircleShape | LineShape;
+export type PencilShape = {
+    type: "pencil",
+    points: [number, number][];
+}
+
+export type Shape = RectangleShape | CircleShape | LineShape | PencilShape;
 
 export type DrawingOptions = {
     stroke?: string;

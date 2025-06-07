@@ -3,7 +3,6 @@
 import { nameAtom } from "@/app/store/atoms/authAtoms";
 import Loader from "@/components/Loader";
 import SocketCanvas from "@/components/SocketCanvas";
-import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
@@ -20,7 +19,6 @@ export default function Page({
   const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const delay = (ms: number) =>
@@ -57,6 +55,8 @@ export default function Page({
 
           setLoadingMessage("Creating new canvas...");
           setValue(45);
+
+          const token = localStorage.getItem("token");
 
           if (!token) {
             setError("Authentication token not found.");
@@ -95,7 +95,11 @@ export default function Page({
     initializeRoom();
   }, [params]);
 
-  if (!token) {
+  if (loading) {
+    return <Loader message={loadingMessage} value={value} />;
+  }
+
+  if (!currUserName || !roomId) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
         <p className="text-red-600 text-lg font-medium">
@@ -108,22 +112,6 @@ export default function Page({
         </p>
       </div>
     );
-  }
-
-  if (!roomId) {
-    return <Loader message="Fetching canvas id..." value={75} />;
-  }
-
-  if (!currUserName) {
-    return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
-        <p className="text-red-600 text-lg font-medium"></p>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return <Loader message={loadingMessage} value={value} />;
   }
 
   return (

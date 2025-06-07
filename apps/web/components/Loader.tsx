@@ -11,7 +11,7 @@ export default function Loader({
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
       <div className="flex flex-col items-center space-y-4">
         {/* Progress Bar */}
-        <Progress value={value} className="w-[200%]" />
+        <Progress value={value} className="w-[400px]" />
 
         {/* Message */}
         <p className="text-gray-600 text-lg font-medium">{message}</p>

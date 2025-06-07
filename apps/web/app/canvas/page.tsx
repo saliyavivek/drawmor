@@ -15,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Users, ArrowRight } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "../store/atoms/authAtoms";
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -22,6 +24,7 @@ export default function CanvasSelectionPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const router = useRouter();
+  const token = useAtomValue(tokenAtom);
 
   const handleCreateCanvas = async () => {
     setIsCreating(true);
@@ -68,6 +71,32 @@ export default function CanvasSelectionPage() {
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent, type: "join" | "create") => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (type === "join") {
+        handleJoinCanvas();
+      } else {
+        handleCreateCanvas();
+      }
+    }
+  };
+
+  if (!token) {
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
+        <p className="text-red-600 text-lg font-medium">
+          Please log in or create an account to access this canvas.
+        </p>
+        <p className="text-xs sm:text-sm text-gray">
+          <a href="/" className="hover:underline">
+            Back to home
+          </a>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
@@ -105,14 +134,15 @@ export default function CanvasSelectionPage() {
             </CardHeader>
             <CardContent className="relative space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="canvas-slug" className="text-base font-medium">
+                <Label htmlFor="new-slug" className="text-base font-medium">
                   Name your canvas
                 </Label>
                 <Input
-                  id="canvas-slug"
+                  id="new-slug"
                   placeholder="Choose a name for your canvas"
                   value={newSlug}
                   onChange={(e) => setNewSlug(e.target.value)}
+                  onKeyDown={(e) => handleKeyPress(e, "create")}
                   className="text-base py-6"
                   disabled={isCreating}
                 />
@@ -164,6 +194,7 @@ export default function CanvasSelectionPage() {
                   placeholder="Enter canvas name"
                   value={canvasSlug}
                   onChange={(e) => setCanvasSlug(e.target.value)}
+                  onKeyDown={(e) => handleKeyPress(e, "join")}
                   className="text-base py-6"
                   disabled={isJoining}
                 />

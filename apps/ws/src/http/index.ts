@@ -68,3 +68,23 @@ export async function insertLineInDB(parsedMessage: WSMessage, userId: string) {
         console.error("error while inserting circle into db.", error);
     }
 }
+
+export async function insertPencilShapeInDB(parsedMessage: WSMessage, userId: string) {
+    try {
+        const payload = parsedMessage.payload;
+        const shape = JSON.parse(payload.shape);
+
+        await prismaClient.drawingElement.create({
+            data: {
+                type: "pencil",
+                data: JSON.stringify({
+                    points: shape.points
+                }),
+                roomId: payload.roomId,
+                userId
+            }
+        })
+    } catch (error) {
+        console.error("error while inserting pencil shape into db.", error);
+    }
+}

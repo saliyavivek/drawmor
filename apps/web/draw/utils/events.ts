@@ -10,6 +10,8 @@ interface DrawingState {
     startY: number;
 }
 
+let pencilPoints: [number, number][] = [];
+
 export function setupMouseEvents(
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
@@ -30,12 +32,29 @@ export function setupMouseEvents(
         const pos = getMousePos(canvas, e);
         state.startX = pos.x;
         state.startY = pos.y;
+
+        if (selectedTool.current === "pencil") {
+            pencilPoints = [[pos.x, pos.y]];
+        }
     };
 
     const onMouseMove = (e: MouseEvent) => {
         if (!state.isDrawing) return;
         const pos = getMousePos(canvas, e);
 
+        if (selectedTool.current === "pencil") {
+            pencilPoints.push([pos.x, pos.y]);
+
+            // Draw live preview
+            const previewShape: Shape = {
+                type: "pencil",
+                points: pencilPoints
+            };
+            drawAll(canvas, ctx, shapes, previewShape);
+            return;
+        }
+
+        //                                                     startX,       startY,       endX,  endY
         const previewShape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
         if (previewShape) {
             drawAll(canvas, ctx, shapes, previewShape);
@@ -47,7 +66,18 @@ export function setupMouseEvents(
         state.isDrawing = false;
         const pos = getMousePos(canvas, e);
 
-        const shape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
+        let shape: Shape | null = null;
+
+        if (selectedTool.current === "pencil") {
+            pencilPoints.push([pos.x, pos.y]);
+            shape = {
+                type: "pencil",
+                points: pencilPoints
+            };
+        } else {
+            shape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
+        }
+
         if (!shape) return;
 
         shapes.push(shape);

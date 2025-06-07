@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { JWT_Payload, User, WSMessage } from "../types/types";
 import { broadcastShape, broadcastUserList, getUsersInRoom } from "./roomManager";
-import { insertRectangleInDB, insertCircleInDB, insertLineInDB } from "../http";
+import { insertRectangleInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB } from "../http";
 
 export function handleJoin(socket: WebSocket, parsedMessage: WSMessage, users: User[]) {
     const user = users.find(u => u.socket === socket);
@@ -64,7 +64,11 @@ export async function handleDrawShape(parsedMessage: WSMessage, users: User[], c
     // type: "draw_shape",
     //    payload: {
     //        roomId,
-    //        shape: JSON.stringify(shape),
+    //        shape: {
+    //          type: "rectangle"
+    //          x: 12,
+    //          y: 100, ...
+    //        }
     //        sender: userId
     //    }
 
@@ -88,6 +92,12 @@ export async function handleDrawShape(parsedMessage: WSMessage, users: User[], c
 
         case "line":
             await insertLineInDB(parsedMessage, currentUser.userId);
+
+            broadcastShape(usersInRoom, shape, payload.roomId, currentUser);
+            break;
+
+        case "pencil":
+            await insertPencilShapeInDB(parsedMessage, currentUser.userId);
 
             broadcastShape(usersInRoom, shape, payload.roomId, currentUser);
             break;

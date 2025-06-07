@@ -9,6 +9,29 @@ export function resizeCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
 }
 
 export function getMousePos(canvas: HTMLCanvasElement, e: MouseEvent) {
+    /*
+        e.clientX and e.clientY give you the mouse position relative to the viewport, not the canvas. If your canvas is not at the top-left corner of the page (e.g. if it has margins or the window is resized), clientX/Y will be offset.
+
+        By subtracting the canvas's bounding box position (using getBoundingClientRect()), you translate the position to be relative to the canvas itself.
+
+        Let’s say:
+
+        Canvas starts at (100, 50) in the page
+        Mouse is at (150, 80)
+
+        Then:
+        
+        rect.left = 100;
+        rect.top = 50;
+        e.clientX = 150;
+        e.clientY = 80;
+        
+        => x = 150 - 100 = 50
+        => y = 80 - 50 = 30
+        
+        So inside the canvas, you're at (50, 30) — correct!
+        */
+
     const rect = canvas.getBoundingClientRect();
     return {
         x: e.clientX - rect.left,
