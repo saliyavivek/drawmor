@@ -118,6 +118,18 @@ export default function AuthForm({
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4 mt-4">
+            {mode === "signin" && (
+              <Button
+                onClick={() => {
+                  setUsername("johndoe");
+                  setPassword("qodQ2kcjaqS@pa");
+                }}
+                className="w-full"
+                disabled={isLoading}
+              >
+                Get Credentials
+              </Button>
+            )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
