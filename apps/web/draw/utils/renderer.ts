@@ -1,5 +1,6 @@
 import { Shape } from "@/types/types";
 import rough from 'roughjs';
+import { drawArrowhead } from "./shapes";
 
 export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, shape: Shape, isPreview: boolean = false) {
     const rc = rough.canvas(canvas);
@@ -30,6 +31,9 @@ export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
         //     stroke: "black",
         //     strokeWidth: 2,
         // });
+    } else if (shape.type === "arrow") {
+        rc.line(shape.startX, shape.startY, shape.endX, shape.endY, { stroke: "#000000", strokeWidth: 2 });
+        drawArrowhead(rc, shape.startX, shape.startY, shape.endX, shape.endY);
     }
 }
 

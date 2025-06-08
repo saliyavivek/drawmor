@@ -66,7 +66,15 @@ export type PencilShape = {
     points: [number, number][];
 }
 
-export type Shape = RectangleShape | CircleShape | LineShape | PencilShape;
+export type ArrowShape = {
+    type: "arrow";
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+}
+
+export type Shape = RectangleShape | CircleShape | LineShape | PencilShape | ArrowShape;
 
 export type DrawingOptions = {
     stroke?: string;

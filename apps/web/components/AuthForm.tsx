@@ -120,6 +120,7 @@ export default function AuthForm({
           <CardFooter className="flex flex-col space-y-4 mt-4">
             {mode === "signin" && (
               <Button
+                type="button"
                 onClick={() => {
                   setUsername("johndoe");
                   setPassword("qodQ2kcjaqS@pa");

@@ -15,7 +15,7 @@ export function handleWebSocketMessage(
             : message.payload.shape;
 
         // Only add valid shapes
-        if (shapeData && (shapeData.type === "rectangle" || shapeData.type === "circle" || shapeData.type === "line" || shapeData.type === "pencil")) {
+        if (shapeData && (shapeData.type === "rectangle" || shapeData.type === "circle" || shapeData.type === "line" || shapeData.type === "pencil" || shapeData.type === "arrow")) {
             shapes.push(shapeData);
             onShapeAdded();
         }

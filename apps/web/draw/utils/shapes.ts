@@ -1,4 +1,5 @@
 import { Shape } from "@/types/types";
+import { RoughCanvas } from "roughjs/bin/canvas";
 
 export function createRectangleShape(startX: number, startY: number, endX: number, endY: number): Shape {
     return {
@@ -74,6 +75,29 @@ export function createLineShape(startX: number, startY: number, endX: number, en
     }
 }
 
+export function createArrowShape(startX: number, startY: number, endX: number, endY: number): Shape {
+    return {
+        type: "arrow",
+        startX,
+        startY,
+        endX,
+        endY
+    }
+}
+
+export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX: number, toY: number, size = 10) {
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+
+    const leftX = toX - size * Math.cos(angle - Math.PI / 6);
+    const leftY = toY - size * Math.sin(angle - Math.PI / 6);
+
+    const rightX = toX - size * Math.cos(angle + Math.PI / 6);
+    const rightY = toY - size * Math.sin(angle + Math.PI / 6);
+
+    rc.line(toX, toY, leftX, leftY);
+    rc.line(toX, toY, rightX, rightY);
+}
+
 export function createShape(tool: string, startX: number, startY: number, endX: number, endY: number): Shape | null {
     if (tool === "rectangle") {
         return createRectangleShape(startX, startY, endX, endY);
@@ -81,6 +105,8 @@ export function createShape(tool: string, startX: number, startY: number, endX: 
         return createCircleShape(startX, startY, endX, endY);
     } else if (tool === "line") {
         return createLineShape(startX, startY, endX, endY);
+    } else if (tool === "arrow") {
+        return createArrowShape(startX, startY, endX, endY);
     }
     return null;
 }

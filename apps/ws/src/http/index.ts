@@ -88,3 +88,26 @@ export async function insertPencilShapeInDB(parsedMessage: WSMessage, userId: st
         console.error("error while inserting pencil shape into db.", error);
     }
 }
+
+export async function insertArrowShapeInDB(parsedMessage: WSMessage, userId: string) {
+    try {
+        const payload = parsedMessage.payload;
+        const shape = JSON.parse(payload.shape);
+
+        await prismaClient.drawingElement.create({
+            data: {
+                type: "arrow",
+                data: JSON.stringify({
+                    startX: shape.startX,
+                    startY: shape.startY,
+                    endX: shape.endX,
+                    endY: shape.endY
+                }),
+                roomId: payload.roomId,
+                userId
+            }
+        })
+    } catch (error) {
+        console.error("error while inserting arrow shape into db.", error);
+    }
+}
