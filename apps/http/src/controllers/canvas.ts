@@ -55,12 +55,12 @@ export async function getRoomIdFromSlug(req: Request, res: Response) {
             }
         });
 
-        // if (!room) {
-        //     res.status(411).json({ message: "Room doesn't exists." });
-        //     return;
-        // }
+        if (!room) {
+            res.status(403).json({ message: "Room doesn't exists." });
+            return;
+        }
 
-        res.status(200).json({ name: slug, roomId: room ? room.id : undefined });
+        res.status(200).json({ name: slug, roomId: room.id });
     } catch (error) {
         res.status(500).json({ message: "Server error.", error });
     }

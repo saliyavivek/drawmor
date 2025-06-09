@@ -24,75 +24,77 @@ export default function Page({
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
-    const initializeRoom = async () => {
+    const createRoom = async () => {
       try {
         setLoadingMessage("Initializing...");
         setValue(10);
         await delay(300);
 
-        setLoadingMessage("Loading canvas...");
+        setLoadingMessage("Extracting canvas name...");
         setValue(30);
         await delay(300);
 
         const resolvedSlug = (await params).slug;
         setSlug(resolvedSlug);
 
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${resolvedSlug}`
-        );
-        const data = response.data;
+        const token = localStorage.getItem("token");
 
-        if (data?.roomId) {
-          await delay(200); // fake processing
-          setLoadingMessage("Joining canvas...");
-          setValue(90);
-
-          setRoomId(data.roomId);
-        } else {
-          setLoadingMessage("Creating new canvas...");
-          setValue(40);
-          await delay(300);
-
-          setLoadingMessage("Creating new canvas...");
-          setValue(45);
-
-          const token = localStorage.getItem("token");
-
-          if (!token) {
-            setError("Authentication token not found.");
-            return;
-          }
-
-          const createResponse = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas`,
-            { name: resolvedSlug },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-
-          setLoadingMessage("Finalizing...");
-          setValue(80);
-          await delay(200);
-
-          const created = createResponse.data;
-          setRoomId(created.roomId);
-
-          await delay(300);
-          setValue(100);
+        if (!token) {
+          setError("Authentication token not found.");
+          return;
         }
+
+        setLoadingMessage("Checking our database...");
+        setValue(50);
+        await delay(300);
+
+        const createResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas`,
+          { name: resolvedSlug },
+          {
+            headers: {
+              Authorization: token,
+            },
+            validateStatus: () => true,
+          }
+        );
+
+        if (createResponse.status === 403) {
+          setError(
+            "That canvas name is already in use. Try choosing a unique one."
+          );
+          return;
+        }
+
+        if (!createResponse.data || !createResponse.data.roomId) {
+          setError(
+            "Something went wrong while setting up your canvas. Please try again shortly."
+          );
+          return;
+        }
+
+        setLoadingMessage("Creating new canvas...");
+        setValue(70);
+        await delay(300);
+
+        const created = createResponse.data;
+        setRoomId(created.roomId);
+
+        setLoadingMessage("Finalizing...");
+        setValue(90);
+        await delay(200);
+
+        await delay(300);
+        setValue(100);
       } catch (e) {
-        console.error("Something went wrong:", e);
-        // setError(e.response.data.errors);
+        setError("Something went wrong while creating canvas.");
       } finally {
-        await delay(300); // show 100% for a brief moment
+        await delay(300);
         setLoading(false);
       }
     };
 
-    initializeRoom();
+    createRoom();
   }, [params]);
 
   if (loading) {
@@ -103,11 +105,13 @@ export default function Page({
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
         <p className="text-red-600 text-lg font-medium">
-          Please log in or create an account to access this canvas.
+          {!currUserName
+            ? "Please log in or create an account to proceed."
+            : error}
         </p>
         <p className="text-xs sm:text-sm text-gray">
-          <a href="/" className="hover:underline">
-            Back to home
+          <a href="/canvas" className="hover:underline">
+            Back
           </a>
         </p>
       </div>

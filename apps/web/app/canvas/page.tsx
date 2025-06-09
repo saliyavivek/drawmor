@@ -23,16 +23,17 @@ export default function CanvasSelectionPage() {
   const [newSlug, setNewSlug] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const token = useAtomValue(tokenAtom);
 
-  const handleCreateCanvas = async () => {
+  const handleCreateCanvas = () => {
     setIsCreating(true);
 
     if (!newSlug.trim()) return;
 
     if (newSlug.length < 3 || newSlug.length > 10) {
-      alert(
+      setError(
         "Canvas name should be atleast 3 and atmost of 10 characters long."
       );
       setIsCreating(false);
@@ -40,11 +41,9 @@ export default function CanvasSelectionPage() {
     }
 
     try {
-      router.push(`/canvas/${newSlug.trim()}`);
+      router.push(`/canvas/create/${newSlug.trim()}`);
     } catch (error) {
-      console.error("Failed to create canvas:", error);
-    } finally {
-      setIsCreating(false);
+      setError("Somthing went wrong. Please try again.");
     }
   };
 
@@ -54,7 +53,7 @@ export default function CanvasSelectionPage() {
     if (!canvasSlug.trim()) return;
 
     if (canvasSlug.length < 3 || canvasSlug.length > 10) {
-      alert(
+      setError(
         "Canvas name should be atleast 3 and atmost of 10 characters long."
       );
       setIsJoining(false);
@@ -62,12 +61,9 @@ export default function CanvasSelectionPage() {
     }
 
     try {
-      // Navigate to the existing canvas
-      router.push(`/canvas/${canvasSlug.trim()}`);
+      router.push(`/canvas/join/${canvasSlug.trim()}`);
     } catch (error) {
-      console.error("Failed to join canvas:", error);
-    } finally {
-      setIsJoining(false);
+      setError("Somthing went wrong. Please try again.");
     }
   };
 
@@ -81,21 +77,6 @@ export default function CanvasSelectionPage() {
       }
     }
   };
-
-  if (!token) {
-    return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
-        <p className="text-red-600 text-lg font-medium">
-          Please log in or create an account to access this canvas.
-        </p>
-        <p className="text-xs sm:text-sm text-gray">
-          <a href="/" className="hover:underline">
-            Back to home
-          </a>
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
@@ -146,16 +127,18 @@ export default function CanvasSelectionPage() {
                   className="text-base py-6"
                   disabled={isCreating}
                 />
-                <p className="text-sm text-muted-foreground">
-                  Canvas name should be atleast 3 and atmost of 10 characters
-                  long.
-                </p>
+                {error && (
+                  <p className="text-sm text-muted-foreground">
+                    Canvas name should be atleast 3 and atmost of 10 characters
+                    long.
+                  </p>
+                )}
               </div>
               <Button
                 onClick={handleCreateCanvas}
                 className="w-full"
                 size="lg"
-                disabled={isCreating}
+                disabled={!newSlug.trim() || isCreating}
               >
                 {isCreating ? (
                   <>
