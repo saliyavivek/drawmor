@@ -1,4 +1,4 @@
-import { JWT_Payload, User } from "../types/types";
+import { JWT_Payload, User, WSMessage } from "../types/types";
 
 export function getUsersInRoom(users: User[], roomId: string) {
     let usersInRoom: User[] = [];
@@ -34,6 +34,20 @@ export const broadcastShape = (usersInRoom: User[], shape: JSON, roomId: string,
                 roomId: roomId,
                 shape,
                 sender: currentUser
+            }
+        }))
+    })
+}
+
+export const broadcastChat = (usersInRoom: User[], currentUser: JWT_Payload, parsedMessage: WSMessage) => {
+    usersInRoom.forEach((user) => {
+        user.socket.send(JSON.stringify({
+            type: "chat",
+            payload: {
+                userId: currentUser.userId,
+                text: parsedMessage.payload.text,
+                sender: currentUser.username,
+                timestamp: Date.now()
             }
         }))
     })

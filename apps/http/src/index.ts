@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import userRouter from "./routes/user";
 import canvasRouter from "./routes/canvas";
+import chatRouter from "./routes/chat";
 import cors from 'cors';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(cors({
 
 app.use("/api/user", userRouter);
 app.use("/api/canvas", canvasRouter);
+app.use("/api/chat", chatRouter)
 
 app.get("/ping", (req, res) => {
     res.status(200).send("pong");

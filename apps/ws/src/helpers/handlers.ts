@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { JWT_Payload, User, WSMessage } from "../types/types";
-import { broadcastShape, broadcastUserList, getUsersInRoom } from "./roomManager";
-import { insertRectangleInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertArrowShapeInDB } from "../http";
+import { broadcastChat, broadcastShape, broadcastUserList, getUsersInRoom } from "./roomManager";
+import { insertRectangleInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertArrowShapeInDB, insertChatInDB } from "../http";
 
 export function handleJoin(socket: WebSocket, parsedMessage: WSMessage, users: User[]) {
     const user = users.find(u => u.socket === socket);
@@ -45,19 +45,12 @@ export function leaveRoom(socket: WebSocket, parsedMessage: WSMessage, users: Us
     broadcastUserList(users, parsedMessage.payload.roomId);
 }
 
-export function handleMessage(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
+export async function handleMessage(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
     const usersInRoom = getUsersInRoom(users, parsedMessage.payload.roomId);
 
-    usersInRoom.forEach((user) => {
-        user.socket.send(JSON.stringify({
-            type: "chat",
-            payload: {
-                message: parsedMessage.payload.message,
-                roomId: parsedMessage.payload.roomId,
-                sender: currentUser.username
-            }
-        }))
-    })
+    await insertChatInDB(parsedMessage);
+
+    broadcastChat(usersInRoom, currentUser, parsedMessage);
 }
 
 export async function handleDrawShape(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {

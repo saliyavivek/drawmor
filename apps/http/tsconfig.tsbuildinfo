@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/controllers/canvas.ts","./src/controllers/user.ts","./src/middleware/auth.ts","./src/routes/canvas.ts","./src/routes/user.ts","./types/express/index.d..ts"],"version":"5.8.2"}
+{"root":["./src/index.ts","./src/controllers/canvas.ts","./src/controllers/chat.ts","./src/controllers/user.ts","./src/middleware/auth.ts","./src/routes/canvas.ts","./src/routes/chat.ts","./src/routes/user.ts","./types/express/index.d..ts"],"version":"5.8.2"}

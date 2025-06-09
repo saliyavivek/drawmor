@@ -111,3 +111,19 @@ export async function insertArrowShapeInDB(parsedMessage: WSMessage, userId: str
         console.error("error while inserting arrow shape into db.", error);
     }
 }
+
+export async function insertChatInDB(parsedMessage: WSMessage) {
+    try {
+        const payload = parsedMessage.payload;
+
+        await prismaClient.chat.create({
+            data: {
+                text: payload.text,
+                roomId: payload.roomId,
+                senderId: payload.userId
+            }
+        })
+    } catch (error) {
+        console.error("error while inserting chat into db.", error);
+    }
+}

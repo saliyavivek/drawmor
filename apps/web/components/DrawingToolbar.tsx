@@ -6,7 +6,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Square, Circle, Minus, icons, Pencil, ArrowRight } from "lucide-react";
+import {
+  Square,
+  Circle,
+  Minus,
+  Pencil,
+  ArrowRight,
+  MousePointer,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tool } from "@/types/types";
 
@@ -22,6 +29,11 @@ export default function DrawingToolbar({
   className,
 }: DrawingToolbarProps) {
   const tools = [
+    {
+      id: "pointer" as Tool,
+      icon: MousePointer,
+      label: "Pointer",
+    },
     {
       id: "rectangle" as Tool,
       icon: Square,

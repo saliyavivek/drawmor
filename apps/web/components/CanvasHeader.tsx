@@ -1,4 +1,4 @@
-import { Copy, LogOut, User, Users } from "lucide-react";
+import { Copy, LogOut, MessageCircle, User, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger } from "./ui/dialog";
@@ -13,10 +13,12 @@ export default function CanvasHeader({
   slug,
   users,
   handleLeave,
+  setShowChat,
 }: {
   slug: string;
   users: string[];
   handleLeave: () => void;
+  setShowChat: any;
 }) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -64,6 +66,14 @@ export default function CanvasHeader({
           </div>
 
           <div className="flex items-center space-x-2">
+            <Button
+              onClick={() => setShowChat((prev: boolean) => !prev)}
+              variant="outline"
+              size="sm"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Chat
+            </Button>
             <Button onClick={handleCopyLink} variant="outline" size="sm">
               <Copy className="h-4 w-4" />
               Copy Link

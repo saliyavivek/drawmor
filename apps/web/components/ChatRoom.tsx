@@ -9,27 +9,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Maximize2, Minimize2, Send, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Message {
-  id: string;
-  userId: string;
-  username: string;
-  text: string;
-  timestamp: number;
-}
-
-interface ChatRoomProps {
-  roomId: string;
-  userId: string;
-  users: { id: string; username: string }[];
-  socket: WebSocket;
-  onClose: () => void;
-  isOpen: boolean;
-}
+import { ChatRoomProps, Message } from "@/types/types";
+import axios from "axios";
 
 export default function ChatRoom({
   roomId,
   userId,
+  username,
   users,
   socket,
   onClose,
@@ -38,9 +24,10 @@ export default function ChatRoom({
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  // const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [fetching, setFetching] = useState(false);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
@@ -49,11 +36,25 @@ export default function ChatRoom({
 
   // Focus input when chat opens
   useEffect(() => {
+    const fetchExistingMessages = async () => {
+      setFetching(true);
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/${roomId}`
+      );
+
+      const existingMessages = response.data.chats;
+      setMessages(existingMessages);
+      setFetching(false);
+    };
+
     if (isOpen) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
     }
+
+    fetchExistingMessages();
   }, [isOpen]);
 
   // Handle incoming messages
@@ -63,19 +64,6 @@ export default function ChatRoom({
 
       if (data.type === "chat") {
         setMessages((prev) => [...prev, data.payload]);
-      } else if (data.type === "typing") {
-        if (data.payload.userId !== userId) {
-          if (data.payload.isTyping) {
-            setTypingUsers((prev) => [
-              ...prev.filter((id) => id !== data.payload.username),
-              data.payload.username,
-            ]);
-          } else {
-            setTypingUsers((prev) =>
-              prev.filter((id) => id !== data.payload.username)
-            );
-          }
-        }
       }
     };
 
@@ -86,21 +74,9 @@ export default function ChatRoom({
     };
   }, [socket, userId]);
 
-  // Handle typing indicator
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setMessage(value);
-
-    socket.send(
-      JSON.stringify({
-        type: "typing",
-        payload: {
-          roomId,
-          userId,
-          isTyping: value.length > 0,
-        },
-      })
-    );
   };
 
   // Send message
@@ -108,11 +84,9 @@ export default function ChatRoom({
     if (!message.trim()) return;
 
     const newMessage = {
-      id: `${userId}-${Date.now()}`,
       userId,
-      username: users.find((u) => u.id === userId)?.username || "Anonymous",
+      roomId,
       text: message,
-      timestamp: Date.now(),
     };
 
     socket.send(
@@ -123,18 +97,6 @@ export default function ChatRoom({
     );
 
     setMessage("");
-
-    // Clear typing indicator
-    socket.send(
-      JSON.stringify({
-        type: "typing",
-        payload: {
-          roomId,
-          userId,
-          isTyping: false,
-        },
-      })
-    );
   };
 
   // Handle Enter key press
@@ -173,7 +135,7 @@ export default function ChatRoom({
       {/* Chat Header */}
       <div className="flex items-center justify-between p-3 border-b">
         <div className="flex items-center space-x-2">
-          <h2 className="font-semibold">Room Chat</h2>
+          <h2 className="font-semibold">Chat</h2>
           <Badge variant="secondary" className="text-xs">
             {users.length} online
           </Badge>
@@ -208,38 +170,42 @@ export default function ChatRoom({
           <span className="text-xs text-muted-foreground whitespace-nowrap">
             Online:
           </span>
-          {users.map((user) => (
-            <Badge
-              key={user.id}
-              variant="outline"
-              className="whitespace-nowrap"
-            >
-              {user.username}
+          {users.map((user, index) => (
+            <Badge key={index} variant="outline" className="whitespace-nowrap">
+              {user}
+              {user === username ? "(you)" : ""}
             </Badge>
           ))}
         </div>
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-3">
+      <ScrollArea className="flex-1 p-3 overflow-scroll">
         <div className="space-y-4">
-          {messages.length === 0 ? (
+          {fetching && (
+            <div className="flex items-center justify-center h-20">
+              <p className="text-sm text-muted-foreground">
+                Fetching your chats...
+              </p>
+            </div>
+          )}
+          {!fetching && messages.length === 0 ? (
             <div className="flex items-center justify-center h-20">
               <p className="text-sm text-muted-foreground">
                 No messages yet. Start the conversation!
               </p>
             </div>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg, index) => (
               <div
-                key={msg.id}
+                key={index}
                 className={`flex ${msg.userId === userId ? "justify-end" : "justify-start"}`}
               >
                 <div className="flex items-end gap-2 max-w-[80%]">
                   {msg.userId !== userId && (
                     <Avatar className="h-6 w-6">
                       <AvatarFallback className="text-xs">
-                        {getInitials(msg.username)}
+                        {getInitials(msg.sender)}
                       </AvatarFallback>
                     </Avatar>
                   )}
@@ -248,7 +214,7 @@ export default function ChatRoom({
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {msg.userId === userId ? "You" : msg.username}
+                        {msg.userId === userId ? "You" : msg.sender}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {formatTime(msg.timestamp)}
@@ -267,7 +233,7 @@ export default function ChatRoom({
                   {msg.userId === userId && (
                     <Avatar className="h-6 w-6">
                       <AvatarFallback className="text-xs">
-                        {getInitials(msg.username)}
+                        {getInitials(msg.sender)}
                       </AvatarFallback>
                     </Avatar>
                   )}
@@ -278,7 +244,7 @@ export default function ChatRoom({
           <div ref={messagesEndRef} />
         </div>
 
-        {typingUsers.length > 0 && (
+        {/* {typingUsers.length > 0 && (
           <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground italic">
             <div className="flex space-x-1">
               <span className="animate-bounce">•</span>
@@ -300,7 +266,7 @@ export default function ChatRoom({
               typing...
             </span>
           </div>
-        )}
+        )} */}
       </ScrollArea>
 
       {/* Message Input */}

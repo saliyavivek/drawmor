@@ -37,6 +37,7 @@ export type Tool =
     | "circle"
     | "line"
     | "pencil"
+    | "pointer"
 
 export type RectangleShape = {
     type: "rectangle";
@@ -88,4 +89,21 @@ export interface CanvasHeaderProps {
     slug: string;
     users: any[];
     handleLeave: () => void;
+}
+
+export interface Message {
+    userId: string;
+    text: string;
+    sender: string;
+    timestamp: number;
+}
+
+export interface ChatRoomProps {
+    roomId: string;
+    userId: string;
+    username: string;
+    users: string[];
+    socket: WebSocket;
+    onClose: () => void;
+    isOpen: boolean;
 }

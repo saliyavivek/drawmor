@@ -19,6 +19,7 @@ model User {
   password        String
   rooms           Room[]
   drawingelements DrawingElement[]
+  messages        Chat[]
 }
 
 model Room {
@@ -28,6 +29,7 @@ model Room {
   adminId         String
   admin           User             @relation(fields: [adminId], references: [id])
   drawingelements DrawingElement[]
+  messages        Chat[]
 }
 
 model DrawingElement {
@@ -41,4 +43,17 @@ model DrawingElement {
 
   roomId String
   room   Room   @relation(fields: [roomId], references: [id])
+}
+
+model Chat {
+  id   String @id @default(uuid())
+  text String
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  createdAt DateTime @default(now())
 }
