@@ -19,7 +19,8 @@ export function setupMouseEvents(
     roomId: string,
     userId: string,
     selectedTool: { current: string },
-    shapes: Shape[]
+    shapes: Shape[],
+    isDarkMode: boolean
 ) {
     const state: DrawingState = {
         isDrawing: false,
@@ -50,14 +51,14 @@ export function setupMouseEvents(
                 type: "pencil",
                 points: pencilPoints
             };
-            drawAll(canvas, ctx, shapes, previewShape);
+            drawAll(canvas, ctx, shapes, isDarkMode, previewShape);
             return;
         }
 
         //                                                     startX,       startY,       endX,  endY
         const previewShape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
         if (previewShape) {
-            drawAll(canvas, ctx, shapes, previewShape);
+            drawAll(canvas, ctx, shapes, isDarkMode, previewShape);
         }
     };
 
@@ -82,7 +83,7 @@ export function setupMouseEvents(
 
         shapes.push(shape);
         sendShapeToServer(socket, roomId, shape, userId);
-        drawAll(canvas, ctx, shapes);
+        drawAll(canvas, ctx, shapes, isDarkMode);
     };
 
     canvas.addEventListener("mousedown", onMouseDown);

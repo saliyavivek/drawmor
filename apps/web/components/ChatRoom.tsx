@@ -127,9 +127,9 @@ export default function ChatRoom({
   return (
     <div
       className={`
-        flex flex-col border-l border-gray-200 bg-white dark:bg-gray-950 
+        flex flex-col border-l border-gray-200 dark:bg-gray-950 
         ${isFullscreen ? "fixed inset-0 z-50" : "h-full"} 
-        transition-all duration-300
+        transition-all duration-300 z-100
       `}
     >
       {/* Chat Header */}
@@ -173,7 +173,7 @@ export default function ChatRoom({
           {users.map((user, index) => (
             <Badge key={index} variant="outline" className="whitespace-nowrap">
               {user}
-              {user === username ? "(you)" : ""}
+              {user === username ? " (you)" : ""}
             </Badge>
           ))}
         </div>

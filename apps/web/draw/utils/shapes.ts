@@ -85,7 +85,7 @@ export function createArrowShape(startX: number, startY: number, endX: number, e
     }
 }
 
-export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX: number, toY: number, size = 10) {
+export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX: number, toY: number, isDarkMode: boolean, size = 10) {
     const angle = Math.atan2(toY - fromY, toX - fromX);
 
     const leftX = toX - size * Math.cos(angle - Math.PI / 6);
@@ -94,8 +94,8 @@ export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX
     const rightX = toX - size * Math.cos(angle + Math.PI / 6);
     const rightY = toY - size * Math.sin(angle + Math.PI / 6);
 
-    rc.line(toX, toY, leftX, leftY);
-    rc.line(toX, toY, rightX, rightY);
+    rc.line(toX, toY, leftX, leftY, { stroke: isDarkMode ? "#555555" : "#000000" });
+    rc.line(toX, toY, rightX, rightY, { stroke: isDarkMode ? "#555555" : "#000000", });
 }
 
 export function createShape(tool: string, startX: number, startY: number, endX: number, endY: number): Shape | null {

@@ -10,6 +10,7 @@ export default function SocketCanvas({
   roomId,
   slug,
   currUserName,
+  roomAdmin,
 }: SocketCanvasProps) {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -81,6 +82,8 @@ export default function SocketCanvas({
         socket={socketRef.current}
         slug={slug}
         users={users}
+        roomAdmin={roomAdmin}
+        currUserName={currUserName}
       />
     </div>
   );

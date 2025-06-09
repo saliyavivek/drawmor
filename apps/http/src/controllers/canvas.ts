@@ -52,6 +52,13 @@ export async function getRoomIdFromSlug(req: Request, res: Response) {
         const room = await prismaClient.room.findFirst({
             where: {
                 name: slug
+            },
+            include: {
+                admin: {
+                    select: {
+                        username: true
+                    }
+                }
             }
         });
 
@@ -60,7 +67,7 @@ export async function getRoomIdFromSlug(req: Request, res: Response) {
             return;
         }
 
-        res.status(200).json({ name: slug, roomId: room.id });
+        res.status(200).json({ name: slug, roomId: room.id, admin: room.admin.username });
     } catch (error) {
         res.status(500).json({ message: "Server error.", error });
     }

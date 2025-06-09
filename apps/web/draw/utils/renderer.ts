@@ -2,10 +2,10 @@ import { Shape } from "@/types/types";
 import rough from 'roughjs';
 import { drawArrowhead } from "./shapes";
 
-export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, shape: Shape, isPreview: boolean = false) {
+export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, isDarkMode: boolean, shape: Shape, isPreview: boolean = false) {
     const rc = rough.canvas(canvas);
     const options = {
-        stroke: '#000000',
+        stroke: isDarkMode ? "#555555" : "#000000",
         strokeWidth: 2,
         roughness: 1.2,
         bowing: 1,
@@ -17,10 +17,11 @@ export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
     } else if (shape.type === "circle") {
         rc.circle(shape.x, shape.y, shape.radius * 2, options); // centerX, centerY, diameter, options
     } else if (shape.type === "line") {
-        rc.line(shape.startX, shape.startY, shape.endX, shape.endY);
+        rc.line(shape.startX, shape.startY, shape.endX, shape.endY, { stroke: isDarkMode ? "#555555" : "#000000" });
     } else if (shape.type === "pencil") {
         ctx.beginPath();
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = isDarkMode ? "#555555" : "#000000";
         const [start, ...rest] = shape.points;
         ctx.moveTo(start![0], start![1]);
         for (const [x, y] of rest) {
@@ -32,17 +33,17 @@ export function drawShape(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
         //     strokeWidth: 2,
         // });
     } else if (shape.type === "arrow") {
-        rc.line(shape.startX, shape.startY, shape.endX, shape.endY, { stroke: "#000000", strokeWidth: 2 });
-        drawArrowhead(rc, shape.startX, shape.startY, shape.endX, shape.endY);
+        rc.line(shape.startX, shape.startY, shape.endX, shape.endY, { stroke: isDarkMode ? "#555555" : "#000000", strokeWidth: 2 });
+        drawArrowhead(rc, shape.startX, shape.startY, shape.endX, shape.endY, isDarkMode);
     }
 }
 
-export function drawAll(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, shapes: Shape[], previewShape?: Shape) {
+export function drawAll(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, shapes: Shape[], isDarkMode: boolean, previewShape?: Shape) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (const shape of shapes) {
-        drawShape(canvas, ctx, shape);
+        drawShape(canvas, ctx, isDarkMode, shape);
     }
     if (previewShape) {
-        drawShape(canvas, ctx, previewShape, true); // Draw preview with dashed style
+        drawShape(canvas, ctx, isDarkMode, previewShape, true); // Draw preview with dashed style
     }
 }

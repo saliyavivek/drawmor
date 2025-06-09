@@ -10,7 +10,8 @@ export async function initDraw(
     socket: WebSocket,
     roomId: string,
     userId: string,
-    selectedTool: { current: string }
+    selectedTool: { current: string },
+    isDarkMode: boolean
 ) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -20,7 +21,7 @@ export async function initDraw(
     // Setup canvas resizing
     const handleResize = () => {
         resizeCanvas(canvas, ctx);
-        drawAll(canvas, ctx, shapes);
+        drawAll(canvas, ctx, shapes, isDarkMode);
     };
 
     handleResize();
@@ -30,7 +31,7 @@ export async function initDraw(
     socket.onmessage = (ev) => {
         const message = JSON.parse(ev.data);
         handleWebSocketMessage(message, userId, shapes, () => {
-            drawAll(canvas, ctx, shapes);
+            drawAll(canvas, ctx, shapes, isDarkMode);
         });
     };
 
@@ -42,7 +43,8 @@ export async function initDraw(
         roomId,
         userId,
         selectedTool,
-        shapes
+        shapes,
+        isDarkMode
     );
 
     // Return cleanup function

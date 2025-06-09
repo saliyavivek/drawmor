@@ -19,6 +19,7 @@ export default function Page({
   const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
+  const [roomAdmin, setRoomAdmin] = useState<string>("");
 
   useEffect(() => {
     const delay = (ms: number) =>
@@ -75,6 +76,7 @@ export default function Page({
 
         const joined = joinResponse.data;
         setRoomId(joined.roomId);
+        setRoomAdmin(joined.admin);
 
         setLoadingMessage("Finalizing...");
         setValue(90);
@@ -115,6 +117,11 @@ export default function Page({
   }
 
   return (
-    <SocketCanvas roomId={roomId} slug={slug} currUserName={currUserName} />
+    <SocketCanvas
+      roomId={roomId}
+      slug={slug}
+      currUserName={currUserName}
+      roomAdmin={roomAdmin}
+    />
   );
 }

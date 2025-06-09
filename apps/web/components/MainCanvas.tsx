@@ -10,13 +10,19 @@ import CanvasHeader from "./CanvasHeader";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ChatRoom from "./ChatRoom";
+import { useTheme } from "next-themes";
 
 export default function MainCanvas({
   roomId,
   socket,
   slug,
   users,
+  currUserName,
+  roomAdmin = currUserName,
 }: MainCanvasProps) {
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
+
   const canvasRef = useRef(null);
   const userId = useAtomValue(userIdAtom);
   const router = useRouter();
@@ -27,14 +33,14 @@ export default function MainCanvas({
   selectedToolRef.current = selectedTool;
 
   const [showChat, setShowChat] = useState(false);
-  const currentUsername = useAtomValue(nameAtom);
+  // const currentUsername = useAtomValue(nameAtom);
 
   useEffect(() => {
     if (!userId || !canvasRef.current) return;
     const canvas = canvasRef.current;
 
-    initDraw(canvas, socket, roomId, userId, selectedToolRef);
-  }, [socket, roomId, userId]);
+    initDraw(canvas, socket, roomId, userId, selectedToolRef, isDarkMode);
+  }, [socket, roomId, userId, isDarkMode]);
 
   function handleLeave() {
     socket.send(
@@ -59,6 +65,7 @@ export default function MainCanvas({
           users={users}
           handleLeave={handleLeave}
           setShowChat={setShowChat}
+          roomAdmin={roomAdmin}
         />
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <DrawingToolbar
@@ -79,7 +86,7 @@ export default function MainCanvas({
             <ChatRoom
               roomId={roomId}
               userId={userId}
-              username={currentUsername!}
+              username={currUserName}
               users={users}
               socket={socket}
               onClose={() => setShowChat(false)}

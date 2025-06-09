@@ -1,4 +1,4 @@
-import { Copy, LogOut, MessageCircle, User, Users } from "lucide-react";
+import { LogOut, MessageCircle, User, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Dialog, DialogTrigger } from "./ui/dialog";
@@ -8,17 +8,20 @@ import LeaveRoomDialog from "./LeaveRoomDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useAtomValue } from "jotai";
 import { nameAtom } from "@/app/store/atoms/authAtoms";
+import { ModeToggle } from "./ModeToggle";
 
 export default function CanvasHeader({
   slug,
   users,
   handleLeave,
   setShowChat,
+  roomAdmin,
 }: {
   slug: string;
   users: string[];
   handleLeave: () => void;
   setShowChat: any;
+  roomAdmin: string;
 }) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -74,19 +77,18 @@ export default function CanvasHeader({
               <MessageCircle className="h-4 w-4" />
               Chat
             </Button>
-            <Button onClick={handleCopyLink} variant="outline" size="sm">
-              <Copy className="h-4 w-4" />
-              Copy Link
-            </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <User className="h-4 w-4" />
-                  Invite
-                </Button>
-              </DialogTrigger>
-              <InviteDialog handleCopyLink={handleCopyLink} />
-            </Dialog>
+            {roomAdmin === currentUsername && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <User className="h-4 w-4" />
+                    Invite
+                  </Button>
+                </DialogTrigger>
+                <InviteDialog handleCopyLink={handleCopyLink} />
+              </Dialog>
+            )}
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -96,6 +98,7 @@ export default function CanvasHeader({
               </DialogTrigger>
               <LeaveRoomDialog handleLeave={handleLeave} />
             </Dialog>
+            <ModeToggle />
           </div>
         </div>
       </header>

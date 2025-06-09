@@ -23,6 +23,7 @@ export interface SocketCanvasProps {
     roomId: string,
     slug: string,
     currUserName: string,
+    roomAdmin?: string
 }
 
 export interface MainCanvasProps {
@@ -30,6 +31,8 @@ export interface MainCanvasProps {
     socket: WebSocket,
     slug: string,
     users: string[],
+    roomAdmin?: string
+    currUserName: string
 }
 
 export type Tool =
