@@ -8,7 +8,7 @@
     "./errors": "./src/errors.ts"
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b tsconfig.json"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"
