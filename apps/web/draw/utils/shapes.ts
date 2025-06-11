@@ -1,4 +1,4 @@
-import { Shape } from "@repo/common/types";
+import { Shape } from "@repo/common/types.js";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { v4 as uuidv4 } from 'uuid';
 

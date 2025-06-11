@@ -1,4 +1,4 @@
-import { Shape } from "@repo/common/types";
+import { Shape } from "@repo/common/types.js";
 
 export function handleWebSocketMessage(
     message: any,

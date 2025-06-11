@@ -1,5 +1,5 @@
 import { prismaClient } from "@repo/db/prisma";
-import { ArrowShape, CircleShape, LineShape, PencilShape, RectangleShape } from "@repo/common/types"
+import { ArrowShape, CircleShape, LineShape, PencilShape, RectangleShape } from "@repo/common/types.js"
 import { WSMessage } from "../types/types";
 
 export async function insertRectangleInDB(shape: RectangleShape, userId: string, roomId: string) {

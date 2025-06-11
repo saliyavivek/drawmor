@@ -1,4 +1,4 @@
-import { Shape } from "@repo/common/types";
+import { Shape } from "@repo/common/types.js";
 
 export function getClickedShape(shapes: Shape[], x: number, y: number): Shape | null {
     for (let i = shapes.length - 1; i >= 0; i--) {

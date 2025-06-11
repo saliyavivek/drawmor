@@ -1,4 +1,4 @@
-import { Shape } from "@repo/common/types";
+import { Shape } from "@repo/common/types.js";
 import { getMousePos } from "./canvas";
 import { createShape } from "./shapes";
 import { drawAll } from "./renderer";
