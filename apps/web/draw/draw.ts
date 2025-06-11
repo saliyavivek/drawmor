@@ -1,4 +1,4 @@
-import { Shape } from "@/types/types";
+import { Shape } from "@repo/common/types";
 import { getExistingShapes } from "./http";
 import { resizeCanvas } from "./utils/canvas";
 import { drawAll } from "./utils/renderer";

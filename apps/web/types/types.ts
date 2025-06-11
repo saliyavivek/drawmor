@@ -43,6 +43,7 @@ export type Tool =
     | "pointer"
 
 export type RectangleShape = {
+    id?: string;
     type: "rectangle";
     x: number;
     y: number;
@@ -51,6 +52,7 @@ export type RectangleShape = {
 };
 
 export type CircleShape = {
+    id?: string;
     type: "circle";
     x: number;
     y: number;
@@ -58,6 +60,7 @@ export type CircleShape = {
 };
 
 export type LineShape = {
+    id?: string;
     type: "line",
     startX: number;
     startY: number;
@@ -66,11 +69,13 @@ export type LineShape = {
 }
 
 export type PencilShape = {
+    id?: string;
     type: "pencil",
     points: [number, number][];
 }
 
 export type ArrowShape = {
+    id?: string;
     type: "arrow";
     startX: number;
     startY: number;
@@ -109,4 +114,5 @@ export interface ChatRoomProps {
     socket: WebSocket;
     onClose: () => void;
     isOpen: boolean;
+    roomAdmin: string
 }

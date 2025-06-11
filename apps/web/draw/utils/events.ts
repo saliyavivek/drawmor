@@ -1,16 +1,22 @@
-import { Shape } from "@/types/types";
+import { Shape } from "@repo/common/types";
 import { getMousePos } from "./canvas";
 import { createShape } from "./shapes";
 import { drawAll } from "./renderer";
-import { sendShapeToServer } from "./websocket";
+import { sendShapeToServer, sendUpdatedShapeToServer } from "./websocket";
+import { getClickedShape } from "./selection";
 
 interface DrawingState {
+    isDragging: boolean;
     isDrawing: boolean;
     startX: number;
     startY: number;
 }
 
 let pencilPoints: [number, number][] = [];
+
+let selectedShape: Shape | null = null;
+let offsetX = 0;
+let offsetY = 0;
 
 export function setupMouseEvents(
     canvas: HTMLCanvasElement,
@@ -23,16 +29,30 @@ export function setupMouseEvents(
     isDarkMode: boolean
 ) {
     const state: DrawingState = {
+        isDragging: false,
         isDrawing: false,
         startX: 0,
         startY: 0
     };
 
     const onMouseDown = (e: MouseEvent) => {
-        state.isDrawing = true;
         const pos = getMousePos(canvas, e);
+        if (selectedTool.current === "pointer") {
+            state.isDragging = true;
+            const clicked = getClickedShape(shapes, pos.x, pos.y);
+            if (clicked) {
+                selectedShape = clicked;
+                if (selectedShape.type === "rectangle") {
+                    offsetX = pos.x - selectedShape.x; // to keep track how far the user has clicked from the left corner
+                    offsetY = pos.y - selectedShape.y;
+                }
+            }
+            return;
+        }
+        state.isDrawing = true;
         state.startX = pos.x;
         state.startY = pos.y;
+
 
         if (selectedTool.current === "pencil") {
             pencilPoints = [[pos.x, pos.y]];
@@ -40,8 +60,19 @@ export function setupMouseEvents(
     };
 
     const onMouseMove = (e: MouseEvent) => {
-        if (!state.isDrawing) return;
         const pos = getMousePos(canvas, e);
+
+        if (selectedShape && state.isDragging && selectedTool.current === "pointer") {
+            if (selectedShape.type === "rectangle") {
+                selectedShape.x = pos.x - offsetX;
+                selectedShape.y = pos.y - offsetY;
+            }
+            drawAll(canvas, ctx, shapes, isDarkMode);
+            return;
+        }
+
+
+        if (!state.isDrawing) return;
 
         if (selectedTool.current === "pencil") {
             pencilPoints.push([pos.x, pos.y]);
@@ -63,6 +94,14 @@ export function setupMouseEvents(
     };
 
     const onMouseUp = (e: MouseEvent) => {
+        if (selectedShape && state.isDragging && selectedTool.current === "pointer") {
+            sendUpdatedShapeToServer(socket, roomId, selectedShape, userId);
+
+            selectedShape = null;
+            state.isDragging = false;
+            return;
+        }
+
         if (!state.isDrawing) return;
         state.isDrawing = false;
         const pos = getMousePos(canvas, e);

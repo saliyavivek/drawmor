@@ -60,7 +60,7 @@ export default function DrawingToolbar({
                       className={cn(
                         "h-10 w-10 rounded-lg transition-all duration-200",
                         selectedTool === tool.id
-                          ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary hover:text-primary-foreground"
+                          ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary dark:hover:bg-primary hover:text-primary-foreground"
                           : "text-muted-foreground"
                       )}
                       onClick={() => onToolChange(tool.id)}

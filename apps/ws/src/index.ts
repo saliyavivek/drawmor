@@ -5,7 +5,7 @@ import express from "express";
 import { WebSocketServer } from "ws";
 import { validateUser } from "./utils/validate";
 import { User } from "./types/types";
-import { handleDrawShape, handleJoin, handleMessage, leaveRoom } from "./helpers/handlers";
+import { handleDrawShape, handleJoinRoom, handleChatMessage, handleUpdateShape, handleleaveRoom } from "./helpers/handlers";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8080;
@@ -38,21 +38,24 @@ wss.on("connection", (socket, request) => {
 
         switch (parsedMessage.type) {
             case "join":
-                handleJoin(socket, parsedMessage, users);
+                handleJoinRoom(socket, parsedMessage, users);
                 break;
 
             case "leave":
-                leaveRoom(socket, parsedMessage, users);
+                handleleaveRoom(socket, parsedMessage, users);
                 break;
 
             case "chat":
-                handleMessage(parsedMessage, users, user!);
+                handleChatMessage(parsedMessage, users, user!);
                 break;
 
             case "draw_shape":
                 handleDrawShape(parsedMessage, users, user!);
                 break;
 
+            case "update_shape":
+                handleUpdateShape(parsedMessage, users, user!);
+                break;
         }
     })
 

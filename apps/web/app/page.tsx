@@ -4,16 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAtomValue, useSetAtom } from "jotai";
-import {
-  CircleIcon,
-  Share2Icon,
-  UsersIcon,
-  Menu,
-  GitBranch,
-  GitCommit,
-  CatIcon,
-  Github,
-} from "lucide-react";
+import { CircleIcon, Share2Icon, UsersIcon, Menu, Github } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
@@ -25,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ModeToggle } from "@/components/ModeToggle";
 
 function Home() {
   const router = useRouter();
@@ -104,6 +96,7 @@ function Home() {
           {/* Desktop Navigation */}
           <div className="hidden sm:flex gap-3 md:gap-4">
             <NavigationButtons />
+            <ModeToggle />
           </div>
 
           {/* Mobile Navigation */}
@@ -281,7 +274,7 @@ function Home() {
             <div className="text-xs sm:text-sm text-muted-foreground">
               <a
                 href="https://github.com/saliyavivek/drawmor"
-                className="flex gap-2 items-center hover:text-black"
+                className="flex gap-2 items-center hover:text-black dark:hover:text-white"
               >
                 <span className="font-medium">Source Code</span>
                 <Github className="h-5 w-auto" />

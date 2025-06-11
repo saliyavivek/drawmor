@@ -10,6 +10,7 @@ export async function getExistingShapes(roomId: string) {
         const parsedShapes = shapes.map((shape) => {
             const parsedData = JSON.parse(shape.data);
             return {
+                id: shape.id,
                 type: shape.type,
                 ...parsedData, // spreads x, y, width, height
             };

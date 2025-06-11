@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/helpers/handlers.ts","./src/helpers/roommanager.ts","./src/http/index.ts","./src/types/types.ts","./src/utils/get-token.ts","./src/utils/validate.ts"],"version":"5.8.2"}
+{"root":["./src/index.ts","./src/helpers/handlers.ts","./src/helpers/roommanager.ts","./src/http/http.ts","./src/http/index.ts","./src/types/types.ts","./src/utils/get-token.ts","./src/utils/validate.ts"],"version":"5.8.2"}

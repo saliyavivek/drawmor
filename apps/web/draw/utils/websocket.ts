@@ -1,4 +1,4 @@
-import { Shape } from "@/types/types";
+import { Shape } from "@repo/common/types";
 
 export function handleWebSocketMessage(
     message: any,
@@ -19,6 +19,22 @@ export function handleWebSocketMessage(
             shapes.push(shapeData);
             onShapeAdded();
         }
+    } else if (message.type === "update_shape") {
+
+        if (message.payload.sender.userId === userId) return;
+
+        const shapeData = typeof message.payload.shape === 'string'
+            ? JSON.parse(message.payload.shape)
+            : message.payload.shape;
+
+
+        const index = shapes.findIndex(shape => shape.id === shapeData.id);
+        if (index !== -1) {
+            shapes[index] = shapeData;
+        } else {
+            shapes.push(shapeData);
+        }
+        onShapeAdded();
     }
 }
 
@@ -31,4 +47,15 @@ export function sendShapeToServer(socket: WebSocket, roomId: string, shape: Shap
             sender: userId
         }
     }));
+}
+
+export function sendUpdatedShapeToServer(socket: WebSocket, roomId: string, shape: Shape, userId: string) {
+    socket.send(JSON.stringify({
+        type: "update_shape",
+        payload: {
+            roomId,
+            shape: JSON.stringify(shape),
+            sender: userId
+        }
+    }))
 }

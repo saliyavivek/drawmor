@@ -16,15 +16,22 @@ export default function CanvasHeader({
   handleLeave,
   setShowChat,
   roomAdmin,
+  username,
 }: {
   slug: string;
   users: string[];
   handleLeave: () => void;
   setShowChat: any;
   roomAdmin: string;
+  username: string;
 }) {
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    const url = window.location.href.replace(
+      "/canvas/create/",
+      "/canvas/join/"
+    );
+    navigator.clipboard.writeText(url);
+
     toast("Link copied to clipboard.");
   };
 
@@ -59,6 +66,9 @@ export default function CanvasHeader({
                         <p key={index}>
                           {user}
                           {user === currentUsername && " (you)"}
+                          {user === roomAdmin && user !== username
+                            ? " (owner)"
+                            : ""}
                         </p>
                       ))}
                     </div>

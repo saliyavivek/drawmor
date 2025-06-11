@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { authSchema } from "@repo/common/types"
+import { authSchema } from "@repo/common/schema"
 import prettifyError from "@repo/common/errors"
 import jwt from "jsonwebtoken";
 import { prismaClient } from "@repo/db/prisma"

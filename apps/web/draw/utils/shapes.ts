@@ -1,8 +1,10 @@
-import { Shape } from "@/types/types";
+import { Shape } from "@repo/common/types";
 import { RoughCanvas } from "roughjs/bin/canvas";
+import { v4 as uuidv4 } from 'uuid';
 
 export function createRectangleShape(startX: number, startY: number, endX: number, endY: number): Shape {
     return {
+        id: uuidv4(),
         type: "rectangle",
         x: Math.min(startX, endX),
         y: Math.min(startY, endY),

@@ -1,6 +1,7 @@
 "use client";
 
 import { nameAtom } from "@/app/store/atoms/authAtoms";
+import Error from "@/components/Error";
 import Loader from "@/components/Loader";
 import SocketCanvas from "@/components/SocketCanvas";
 import axios from "axios";
@@ -102,20 +103,7 @@ export default function Page({
   }
 
   if (!currUserName || !roomId) {
-    return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
-        <p className="text-red-600 text-lg font-medium">
-          {!currUserName
-            ? "Please log in or create an account to proceed."
-            : error}
-        </p>
-        <p className="text-xs sm:text-sm text-gray">
-          <a href="/canvas" className="hover:underline">
-            Back
-          </a>
-        </p>
-      </div>
-    );
+    return <Error currUserName={currUserName} error={error} />;
   }
 
   return (

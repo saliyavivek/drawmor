@@ -14,9 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Users, ArrowRight } from "lucide-react";
-import { useAtomValue } from "jotai";
-import { tokenAtom } from "../store/atoms/authAtoms";
+import { Plus, Users, ArrowRight, Loader2 } from "lucide-react";
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -25,7 +23,6 @@ export default function CanvasSelectionPage() {
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const token = useAtomValue(tokenAtom);
 
   const handleCreateCanvas = () => {
     setIsCreating(true);
@@ -142,7 +139,7 @@ export default function CanvasSelectionPage() {
               >
                 {isCreating ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating...
                   </>
                 ) : (
@@ -195,7 +192,7 @@ export default function CanvasSelectionPage() {
               >
                 {isJoining ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Joining...
                   </>
                 ) : (

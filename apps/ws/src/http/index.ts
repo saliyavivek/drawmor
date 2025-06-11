@@ -1,129 +1,64 @@
-import { WSMessage } from "../types/types";
+import { broadcastShape, getUsersInRoom } from "../helpers/roomManager";
+import { WSMessage, User, JWT_Payload } from "../types/types";
 import { prismaClient } from "@repo/db/prisma"
+import { insertArrowShapeInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertRectangleInDB } from "./http";
 
-export async function insertRectangleInDB(parsedMessage: WSMessage, userId: string) {
-    try {
-        const payload = parsedMessage.payload;
-        const shape = JSON.parse(payload.shape);
+export async function drawShape(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
+    const shape = JSON.parse(parsedMessage.payload.shape);
+    const roomId = parsedMessage.payload.roomId;
+    const usersInRoom = getUsersInRoom(users, parsedMessage.payload.roomId);
 
-        await prismaClient.drawingElement.create({
-            data: {
-                type: shape.type,
-                data: JSON.stringify({
-                    x: shape.x,
-                    y: shape.y,
-                    width: shape.width,
-                    height: shape.height
-                }),
-                roomId: payload.roomId,
-                userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting rectangle into db.", error);
+    switch (shape.type) {
+        case "rectangle":
+            await insertRectangleInDB(shape, currentUser.userId, roomId);
+            break;
+
+        case "circle":
+            await insertCircleInDB(shape, currentUser.userId, roomId);
+            break;
+
+        case "line":
+            await insertLineInDB(shape, currentUser.userId, roomId);
+            break;
+
+        case "pencil":
+            await insertPencilShapeInDB(shape, currentUser.userId, roomId);
+            break;
+
+        case "arrow":
+            await insertArrowShapeInDB(shape, currentUser.userId, roomId);
+            break;
+
+        default:
+            console.log("Can't draw the given shape.");
+            break;
     }
+    broadcastShape(usersInRoom, shape, roomId, currentUser, "draw_shape");
 }
 
-export async function insertCircleInDB(parsedMessage: WSMessage, userId: string) {
-    try {
-        const payload = parsedMessage.payload;
-        const shape = JSON.parse(payload.shape);
+export async function updateShape(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
+    const shape = JSON.parse(parsedMessage.payload.shape);
 
-        await prismaClient.drawingElement.create({
-            data: {
-                type: "circle",
-                data: JSON.stringify({
-                    x: shape.x,
-                    y: shape.y,
-                    radius: shape.radius
-                }),
-                roomId: payload.roomId,
-                userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting circle into db.", error);
-    }
-}
+    switch (shape.type) {
+        case "rectangle":
+            await prismaClient.drawingElement.update({
+                where: {
+                    id: shape.id
+                },
+                data: {
+                    data: JSON.stringify({
+                        x: shape.x,
+                        y: shape.y,
+                        width: shape.width,
+                        height: shape.height
+                    }),
+                }
+            });
+            broadcastShape(users, shape, parsedMessage.payload.roomId, currentUser, "update_shape")
+            break;
 
-export async function insertLineInDB(parsedMessage: WSMessage, userId: string) {
-    try {
-        const payload = parsedMessage.payload;
-        const shape = JSON.parse(payload.shape);
-
-        await prismaClient.drawingElement.create({
-            data: {
-                type: "line",
-                data: JSON.stringify({
-                    startX: shape.startX,
-                    startY: shape.startY,
-                    endX: shape.endX,
-                    endY: shape.endY
-                }),
-                roomId: payload.roomId,
-                userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting circle into db.", error);
-    }
-}
-
-export async function insertPencilShapeInDB(parsedMessage: WSMessage, userId: string) {
-    try {
-        const payload = parsedMessage.payload;
-        const shape = JSON.parse(payload.shape);
-
-        await prismaClient.drawingElement.create({
-            data: {
-                type: "pencil",
-                data: JSON.stringify({
-                    points: shape.points
-                }),
-                roomId: payload.roomId,
-                userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting pencil shape into db.", error);
-    }
-}
-
-export async function insertArrowShapeInDB(parsedMessage: WSMessage, userId: string) {
-    try {
-        const payload = parsedMessage.payload;
-        const shape = JSON.parse(payload.shape);
-
-        await prismaClient.drawingElement.create({
-            data: {
-                type: "arrow",
-                data: JSON.stringify({
-                    startX: shape.startX,
-                    startY: shape.startY,
-                    endX: shape.endX,
-                    endY: shape.endY
-                }),
-                roomId: payload.roomId,
-                userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting arrow shape into db.", error);
-    }
-}
-
-export async function insertChatInDB(parsedMessage: WSMessage) {
-    try {
-        const payload = parsedMessage.payload;
-
-        await prismaClient.chat.create({
-            data: {
-                text: payload.text,
-                roomId: payload.roomId,
-                senderId: payload.userId
-            }
-        })
-    } catch (error) {
-        console.error("error while inserting chat into db.", error);
+        default:
+            console.log("Can't update the given shape.");
+            break;
     }
 }

@@ -1,4 +1,4 @@
-import { Shape } from "@/types/types";
+import { Shape } from "@repo/common/types";
 import rough from 'roughjs';
 import { drawArrowhead } from "./shapes";
 

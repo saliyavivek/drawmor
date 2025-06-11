@@ -1,6 +1,6 @@
 "use client";
 
-import { nameAtom, userIdAtom } from "@/app/store/atoms/authAtoms";
+import { userIdAtom } from "@/app/store/atoms/authAtoms";
 import { initDraw } from "@/draw/draw";
 import { MainCanvasProps, Tool } from "@/types/types";
 import { useAtomValue } from "jotai";
@@ -27,7 +27,7 @@ export default function MainCanvas({
   const userId = useAtomValue(userIdAtom);
   const router = useRouter();
 
-  const [selectedTool, setSelectedTool] = useState<Tool>("rectangle");
+  const [selectedTool, setSelectedTool] = useState<Tool>("pointer");
 
   const selectedToolRef = useRef(selectedTool);
   selectedToolRef.current = selectedTool;
@@ -66,6 +66,7 @@ export default function MainCanvas({
           handleLeave={handleLeave}
           setShowChat={setShowChat}
           roomAdmin={roomAdmin}
+          username={currUserName}
         />
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
           <DrawingToolbar
@@ -91,6 +92,7 @@ export default function MainCanvas({
               socket={socket}
               onClose={() => setShowChat(false)}
               isOpen={showChat}
+              roomAdmin={roomAdmin}
             />
           </div>
         )}

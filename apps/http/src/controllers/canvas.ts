@@ -1,5 +1,5 @@
 import prettifyError from "@repo/common/errors";
-import { roomSchema } from "@repo/common/types";
+import { roomSchema } from "@repo/common/schema";
 import { prismaClient } from "@repo/db/prisma";
 import { Request, Response } from "express";
 
