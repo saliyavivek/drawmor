@@ -68,7 +68,7 @@ export default function MainCanvas({
           roomAdmin={roomAdmin}
           username={currUserName}
         />
-        <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2">
           <DrawingToolbar
             selectedTool={selectedTool}
             onToolChange={setSelectedTool}

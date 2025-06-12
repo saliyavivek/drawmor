@@ -130,7 +130,7 @@ export default function ChatRoom({
       className={`
         flex flex-col border-l border-gray-200 bg-white dark:bg-background
         ${isFullscreen ? "fixed inset-0 z-50" : "h-full"} 
-        transition-all duration-300 z-100
+        transition-all duration-300
       `}
     >
       {/* Chat Header */}
