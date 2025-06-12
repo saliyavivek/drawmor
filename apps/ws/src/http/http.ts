@@ -27,6 +27,7 @@ export async function insertCircleInDB(shape: CircleShape, userId: string, roomI
     try {
         await prismaClient.drawingElement.create({
             data: {
+                id: shape.id,
                 type: "circle",
                 data: JSON.stringify({
                     x: shape.x,
@@ -112,5 +113,44 @@ export async function insertChatInDB(parsedMessage: WSMessage) {
         })
     } catch (error) {
         console.error("error while inserting chat into db.", error);
+    }
+}
+
+export async function updateRectangle(shape: RectangleShape) {
+    try {
+        await prismaClient.drawingElement.update({
+            where: {
+                id: shape.id
+            },
+            data: {
+                data: JSON.stringify({
+                    x: shape.x,
+                    y: shape.y,
+                    width: shape.width,
+                    height: shape.height
+                }),
+            }
+        });
+    } catch (error) {
+        console.error("error while updating rect into db.", error);
+    }
+}
+
+export async function updateCircle(shape: CircleShape) {
+    try {
+        await prismaClient.drawingElement.update({
+            where: {
+                id: shape.id
+            },
+            data: {
+                data: JSON.stringify({
+                    x: shape.x,
+                    y: shape.y,
+                    radius: shape.radius,
+                })
+            }
+        })
+    } catch (error) {
+        console.error("error while updating circle into db.", error);
     }
 }

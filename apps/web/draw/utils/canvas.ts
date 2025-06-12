@@ -38,3 +38,22 @@ export function getMousePos(canvas: HTMLCanvasElement, e: MouseEvent) {
         y: e.clientY - rect.top,
     };
 }
+
+export function getPosFromEvent(e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement): { x: number, y: number } {
+    const rect = canvas.getBoundingClientRect();
+
+    if (e instanceof TouchEvent) {
+        const touch = e.touches[0] || e.changedTouches[0]; // fallback for touchend
+        if (!touch) return { x: 0, y: 0 }; // safe fallback
+        return {
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top,
+        };
+    }
+
+    return {
+        x: (e as MouseEvent).clientX - rect.left,
+        y: (e as MouseEvent).clientY - rect.top,
+    };
+}
+

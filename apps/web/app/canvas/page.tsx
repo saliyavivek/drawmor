@@ -84,7 +84,7 @@ export default function CanvasSelectionPage() {
             <img
               src="/logo_colored.png"
               alt="Drawmor Logo"
-              className="h-24 w-auto"
+              className="h-24 w-auto rounded"
               width={20}
               height={20}
             />

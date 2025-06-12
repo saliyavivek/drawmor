@@ -27,18 +27,6 @@ export function getClickedShape(shapes: Shape[], x: number, y: number): Shape | 
                 return shape;
             }
         }
-
-        // For pencil/arrow, use proximity to any point
-        if (shape.type === "pencil") {
-            for (const [px, py] of shape.points) {
-                const dist = Math.hypot(px - x, py - y);
-                if (dist < 5) return shape;
-            }
-        }
-
-        if (shape.type === "line" || shape.type === "arrow") {
-            // Use simple point-to-line distance formula or bounding box
-        }
     }
 
     return null;

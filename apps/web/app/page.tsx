@@ -86,7 +86,7 @@ function Home() {
             <img
               src="/logo_colored.png"
               alt="Drawmor Logo"
-              className="h-6 w-6 sm:h-8 sm:w-8"
+              className="h-6 w-6 sm:h-8 sm:w-8 rounded"
               width={32}
               height={32}
             />

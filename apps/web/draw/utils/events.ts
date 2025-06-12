@@ -1,5 +1,5 @@
 import { Shape } from "@repo/common/types.js";
-import { getMousePos } from "./canvas";
+import { getPosFromEvent } from "./canvas";
 import { createShape } from "./shapes";
 import { drawAll } from "./renderer";
 import { sendShapeToServer, sendUpdatedShapeToServer } from "./websocket";
@@ -36,15 +36,25 @@ export function setupMouseEvents(
     };
 
     const onMouseDown = (e: MouseEvent) => {
-        const pos = getMousePos(canvas, e);
+        const pos = getPosFromEvent(e, canvas);
         if (selectedTool.current === "pointer") {
             state.isDragging = true;
             const clicked = getClickedShape(shapes, pos.x, pos.y);
             if (clicked) {
                 selectedShape = clicked;
-                if (selectedShape.type === "rectangle") {
-                    offsetX = pos.x - selectedShape.x; // to keep track how far the user has clicked from the left corner
+                if (selectedShape.type === "rectangle" || selectedShape.type === "circle") {
+                    offsetX = pos.x - selectedShape.x;
                     offsetY = pos.y - selectedShape.y;
+                    /*
+                        what are offsetX and offsetY?
+
+                        basically, it keeps track of how far the user has clicked from the left corner(for rect) or the center(for circle)
+
+                        so that when dragging the shape, we maintain the same distance
+
+                        else the shape will jump to the user's cursor
+
+                    */
                 }
             }
             return;
@@ -60,10 +70,19 @@ export function setupMouseEvents(
     };
 
     const onMouseMove = (e: MouseEvent) => {
-        const pos = getMousePos(canvas, e);
+        const pos = getPosFromEvent(e, canvas);
+
+        if (selectedTool.current === "pointer") {
+            const hoveredShape = getClickedShape(shapes, pos.x, pos.y);
+            if (hoveredShape) {
+                canvas.style.cursor = "move";
+            } else {
+                canvas.style.cursor = "crosshair";
+            }
+        }
 
         if (selectedShape && state.isDragging && selectedTool.current === "pointer") {
-            if (selectedShape.type === "rectangle") {
+            if (selectedShape.type === "rectangle" || selectedShape.type === "circle") {
                 selectedShape.x = pos.x - offsetX;
                 selectedShape.y = pos.y - offsetY;
             }
@@ -87,7 +106,7 @@ export function setupMouseEvents(
         }
 
         //                                                     startX,       startY,       endX,  endY
-        const previewShape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
+        const previewShape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y, false);
         if (previewShape) {
             drawAll(canvas, ctx, shapes, isDarkMode, previewShape);
         }
@@ -104,7 +123,7 @@ export function setupMouseEvents(
 
         if (!state.isDrawing) return;
         state.isDrawing = false;
-        const pos = getMousePos(canvas, e);
+        const pos = getPosFromEvent(e, canvas);
 
         let shape: Shape | null = null;
 
@@ -115,7 +134,7 @@ export function setupMouseEvents(
                 points: pencilPoints
             };
         } else {
-            shape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y);
+            shape = createShape(selectedTool.current, state.startX, state.startY, pos.x, pos.y, true);
         }
 
         if (!shape) return;
@@ -125,9 +144,39 @@ export function setupMouseEvents(
         drawAll(canvas, ctx, shapes, isDarkMode);
     };
 
+    const onTouchStart = (e: TouchEvent) => {
+        e.preventDefault();
+        const pos = getPosFromEvent(e, canvas);
+        onMouseDown({
+            clientX: pos.x,
+            clientY: pos.y
+        } as unknown as MouseEvent); // type-cast to reuse
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+        e.preventDefault();
+        const pos = getPosFromEvent(e, canvas);
+        onMouseMove({
+            clientX: pos.x,
+            clientY: pos.y
+        } as unknown as MouseEvent);
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+        e.preventDefault();
+        onMouseUp(e as unknown as MouseEvent);
+    };
+
+
     canvas.addEventListener("mousedown", onMouseDown);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseup", onMouseUp);
+
+    canvas.addEventListener("touchstart", onTouchStart);
+    canvas.addEventListener("touchmove", onTouchMove);
+    canvas.addEventListener("touchend", onTouchEnd);
+
+
     window.addEventListener("mouseup", onMouseUp);
 
     // Return cleanup function
@@ -135,6 +184,12 @@ export function setupMouseEvents(
         canvas.removeEventListener("mousedown", onMouseDown);
         canvas.removeEventListener("mousemove", onMouseMove);
         canvas.removeEventListener("mouseup", onMouseUp);
+
+        canvas.removeEventListener("touchstart", onTouchStart);
+        canvas.removeEventListener("touchmove", onTouchMove);
+        canvas.removeEventListener("touchend", onTouchEnd);
+
+
         window.removeEventListener("mouseup", onMouseUp);
     };
 }

@@ -1,7 +1,7 @@
 import { broadcastShape, getUsersInRoom } from "../helpers/roomManager";
 import { WSMessage, User, JWT_Payload } from "../types/types";
 import { prismaClient } from "@repo/db/prisma"
-import { insertArrowShapeInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertRectangleInDB } from "./http";
+import { insertArrowShapeInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertRectangleInDB, updateCircle, updateRectangle } from "./http";
 
 export async function drawShape(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
     const shape = JSON.parse(parsedMessage.payload.shape);
@@ -41,24 +41,17 @@ export async function updateShape(parsedMessage: WSMessage, users: User[], curre
 
     switch (shape.type) {
         case "rectangle":
-            await prismaClient.drawingElement.update({
-                where: {
-                    id: shape.id
-                },
-                data: {
-                    data: JSON.stringify({
-                        x: shape.x,
-                        y: shape.y,
-                        width: shape.width,
-                        height: shape.height
-                    }),
-                }
-            });
-            broadcastShape(users, shape, parsedMessage.payload.roomId, currentUser, "update_shape")
+            await updateRectangle(shape);
+            break;
+
+        case "circle":
+            await updateCircle(shape);
             break;
 
         default:
             console.log("Can't update the given shape.");
             break;
+
     }
+    broadcastShape(users, shape, parsedMessage.payload.roomId, currentUser, "update_shape")
 }

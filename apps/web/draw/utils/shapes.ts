@@ -2,9 +2,9 @@ import { Shape } from "@repo/common/types.js";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { v4 as uuidv4 } from 'uuid';
 
-export function createRectangleShape(startX: number, startY: number, endX: number, endY: number): Shape {
+export function createRectangleShape(startX: number, startY: number, endX: number, endY: number, assignId: boolean): Shape {
     return {
-        id: uuidv4(),
+        ...(assignId ? { id: uuidv4() } : {}), // to avoid unnecessarily assigning id while previewing shape
         type: "rectangle",
         x: Math.min(startX, endX),
         y: Math.min(startY, endY),
@@ -41,7 +41,7 @@ export function createRectangleShape(startX: number, startY: number, endX: numbe
     */
 }
 
-export function createCircleShape(centerX: number, centerY: number, endX: number, endY: number): Shape {
+export function createCircleShape(centerX: number, centerY: number, endX: number, endY: number, assignId: boolean): Shape {
     /*
         This uses the Pythagorean theorem to calculate the distance between two points: (centerX, centerY) and (endX, endY).
 
@@ -60,6 +60,7 @@ export function createCircleShape(centerX: number, centerY: number, endX: number
         Math.pow(endX - centerX, 2) + Math.pow(endY - centerY, 2)
     );
     return {
+        ...(assignId ? { id: uuidv4() } : {}),
         type: "circle",
         x: centerX,
         y: centerY,
@@ -67,8 +68,9 @@ export function createCircleShape(centerX: number, centerY: number, endX: number
     };
 }
 
-export function createLineShape(startX: number, startY: number, endX: number, endY: number): Shape {
+export function createLineShape(startX: number, startY: number, endX: number, endY: number, assignId: boolean): Shape {
     return {
+        ...(assignId ? { id: uuidv4() } : {}),
         type: "line",
         startX,
         startY,
@@ -77,8 +79,9 @@ export function createLineShape(startX: number, startY: number, endX: number, en
     }
 }
 
-export function createArrowShape(startX: number, startY: number, endX: number, endY: number): Shape {
+export function createArrowShape(startX: number, startY: number, endX: number, endY: number, assignId: boolean): Shape {
     return {
+        ...(assignId ? { id: uuidv4() } : {}),
         type: "arrow",
         startX,
         startY,
@@ -100,15 +103,15 @@ export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX
     rc.line(toX, toY, rightX, rightY, { stroke: isDarkMode ? "#555555" : "#000000", });
 }
 
-export function createShape(tool: string, startX: number, startY: number, endX: number, endY: number): Shape | null {
+export function createShape(tool: string, startX: number, startY: number, endX: number, endY: number, assignId: boolean): Shape | null {
     if (tool === "rectangle") {
-        return createRectangleShape(startX, startY, endX, endY);
+        return createRectangleShape(startX, startY, endX, endY, assignId);
     } else if (tool === "circle") {
-        return createCircleShape(startX, startY, endX, endY);
+        return createCircleShape(startX, startY, endX, endY, assignId);
     } else if (tool === "line") {
-        return createLineShape(startX, startY, endX, endY);
+        return createLineShape(startX, startY, endX, endY, assignId);
     } else if (tool === "arrow") {
-        return createArrowShape(startX, startY, endX, endY);
+        return createArrowShape(startX, startY, endX, endY, assignId);
     }
     return null;
 }

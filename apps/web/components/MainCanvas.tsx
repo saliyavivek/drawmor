@@ -68,7 +68,7 @@ export default function MainCanvas({
           roomAdmin={roomAdmin}
           username={currUserName}
         />
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50">
           <DrawingToolbar
             selectedTool={selectedTool}
             onToolChange={setSelectedTool}
@@ -77,7 +77,7 @@ export default function MainCanvas({
         <div className="flex flex-1 overflow-hidden">
           <canvas
             ref={canvasRef}
-            className={`border h-screen overflow-hidden ${selectedTool !== "pointer" && "cursor-crosshair"}`}
+            className={`border h-screen overflow-hidden touch-none ${selectedTool !== "pointer" && "cursor-crosshair"}`}
           />
         </div>
         {showChat && (
