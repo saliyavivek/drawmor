@@ -164,7 +164,11 @@ export function setupMouseEvents(
 
     const onTouchEnd = (e: TouchEvent) => {
         e.preventDefault();
-        onMouseUp(e as unknown as MouseEvent);
+        const pos = getPosFromEvent(e, canvas);
+        onMouseUp({
+            clientX: pos.x,
+            clientY: pos.y
+        } as unknown as MouseEvent);
     };
 
 
