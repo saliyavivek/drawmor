@@ -187,7 +187,7 @@ function Home() {
           </Button>
           <button
             onClick={async () => {
-              await fetch("https://drawmor-http.onrender.com/debug-token", {
+              await fetch("https://drawmor-http.onrender.com/api/debug-token", {
                 credentials: "include",
               })
                 .then((res) => res.json())
