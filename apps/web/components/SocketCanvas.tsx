@@ -17,9 +17,7 @@ export default function SocketCanvas({
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WS_URL}?token=${localStorage.getItem("token")}`
-    );
+    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}`);
 
     ws.onopen = () => {
       socketRef.current = ws;
@@ -69,7 +67,7 @@ export default function SocketCanvas({
         socketRef.current = null;
       }
     };
-  }, [roomId]);
+  }, [roomId, currUserName]);
 
   if (!isConnected || !socketRef.current) {
     return <Loader message="Connecting to web socket server..." value={95} />;

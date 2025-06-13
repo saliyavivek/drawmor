@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useAtomValue, useSetAtom } from "jotai";
 import { CircleIcon, Share2Icon, UsersIcon, Menu, Github } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
+import { logoutAtom, usernameAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 
 function Home() {
   const router = useRouter();
-  const isLoggedIn = useAtomValue(userAtom);
+  const isLoggedIn = useAtomValue(usernameAtom);
   const link = isLoggedIn ? "/canvas" : "/signin";
   const logout = useSetAtom(logoutAtom);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

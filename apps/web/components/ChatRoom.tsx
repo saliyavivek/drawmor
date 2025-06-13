@@ -41,7 +41,8 @@ export default function ChatRoom({
       setFetching(true);
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/${roomId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/${roomId}`,
+        { withCredentials: true }
       );
 
       const existingMessages = response.data.chats;

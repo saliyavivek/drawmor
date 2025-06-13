@@ -81,7 +81,7 @@ export async function signin(req: Request, res: Response) {
             username: existingUser.username
         }, process.env.JWT_SECRET!);
 
-        res.json({ message: "User logged in.", id: existingUser.id, token })
+        res.status(200).json({ message: "User logged in.", user: { id: existingUser.id, username: existingUser.username }, token })
     } catch (error) {
         res.status(500).json({ message: "Server error.", error })
     }

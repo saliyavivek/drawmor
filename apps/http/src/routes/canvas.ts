@@ -4,7 +4,7 @@ import { authMiddleware } from "../middleware/auth";
 const router = Router();
 
 router.route("/").post(authMiddleware, createCanvas);
-router.route("/:slug").get(getRoomIdFromSlug);
-router.route("/shapes/:roomId").get(getExistingShapes);
+router.route("/:slug").get(authMiddleware, getRoomIdFromSlug);
+router.route("/shapes/:roomId").get(authMiddleware, getExistingShapes);
 
 export default router;

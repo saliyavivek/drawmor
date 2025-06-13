@@ -22,7 +22,7 @@ import { InviteDialog } from "./InviteDialog";
 import LeaveRoomDialog from "./LeaveRoomDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useAtomValue } from "jotai";
-import { nameAtom } from "@/app/store/atoms/authAtoms";
+import { usernameAtom } from "@/app/store/atoms/authAtoms";
 import { ModeToggle } from "./ModeToggle";
 import { useState } from "react";
 
@@ -53,7 +53,7 @@ export default function CanvasHeader({
     toast("Link copied to clipboard.");
   };
 
-  const currentUsername = useAtomValue(nameAtom);
+  const currentUsername = useAtomValue(usernameAtom);
 
   return (
     <>
@@ -110,7 +110,7 @@ export default function CanvasHeader({
                 variant="outline"
                 size="sm"
               >
-                <MessageCircle className="h-4 w-4 mr-2" />
+                <MessageCircle className="h-4 w-4" />
                 Chat
               </Button>
               {roomAdmin === currentUsername && (
@@ -120,7 +120,7 @@ export default function CanvasHeader({
                 >
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm">
-                      <User className="h-4 w-4 mr-2" />
+                      <User className="h-4 w-4" />
                       Invite
                     </Button>
                   </DialogTrigger>
@@ -130,7 +130,7 @@ export default function CanvasHeader({
               <Dialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm">
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4" />
                     Leave
                   </Button>
                 </DialogTrigger>

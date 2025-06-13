@@ -1,6 +1,6 @@
 "use client";
 
-import { nameAtom } from "@/app/store/atoms/authAtoms";
+import { usernameAtom } from "@/app/store/atoms/authAtoms";
 import Error from "@/components/Error";
 import Loader from "@/components/Loader";
 import SocketCanvas from "@/components/SocketCanvas";
@@ -17,7 +17,7 @@ export default function Page({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const currUserName = useAtomValue(nameAtom);
+  const currUserName = useAtomValue(usernameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
 
@@ -38,13 +38,6 @@ export default function Page({
         const resolvedSlug = (await params).slug;
         setSlug(resolvedSlug);
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          setError("Authentication token not found.");
-          return;
-        }
-
         setLoadingMessage("Checking our database...");
         setValue(50);
         await delay(300);
@@ -53,9 +46,7 @@ export default function Page({
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas`,
           { name: resolvedSlug },
           {
-            headers: {
-              Authorization: token,
-            },
+            withCredentials: true,
             validateStatus: () => true,
           }
         );

@@ -55,6 +55,8 @@ export default function MainCanvas({
     toast("You have left the room.");
   }
 
+  console.log(users);
+
   if (!userId) {
     return <div>Loading user...</div>;
   } else {

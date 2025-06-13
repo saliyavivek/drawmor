@@ -1,46 +1,20 @@
-import { TokenPayload } from '@/types/types';
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
-import { jwtDecode } from "jwt-decode";
+import { Session } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
-const decodeToken = (token: string) => {
-    try {
-        const payload = jwtDecode<TokenPayload>(token);
-        return {
-            userId: payload.userId,
-            username: payload.username,
-        };
-    } catch (error) {
-        return null;
-    }
-};
-
-// Base atoms
-export const tokenAtom = atomWithStorage('authToken', null); // Jotai's atomWithStorage automatically handles localStorage persistence.
+// Direct session atom (you update this from useSession)
+export const sessionAtom = atom<Session | null>(null);
 
 // Derived atoms
-export const userAtom = atom((get) => {
-    const token = get(tokenAtom);
-    return token ? decodeToken(token) : null;
+export const userIdAtom = atom((get) => get(sessionAtom)?.user?.id ?? null);
+export const usernameAtom = atom((get) => get(sessionAtom)?.user?.username ?? null);
+
+// Write-only atom to set session
+export const loginAtom = atom(null, (_get, set, session: Session) => {
+    set(sessionAtom, session);
 });
 
-export const userIdAtom = atom((get) => {
-    const user = get(userAtom);
-    return user?.userId || null;
-});
-
-export const nameAtom = atom((get) => {
-    const user = get(userAtom);
-    return user?.username || null;
-});
-
-//Action atoms (Write-Only)
-export const loginAtom = atom(null, (get, set, token: string) => {
-    //@ts-ignore
-    set(tokenAtom, token);
-});
-
-// Logout atom (Write-only)
+// Write-only atom to clear session (on signOut)
 export const logoutAtom = atom(null, (_get, set) => {
-    set(tokenAtom, null); // This clears it from atom + localStorage
+    signOut({ callbackUrl: "/" });
 });

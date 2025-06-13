@@ -4,35 +4,34 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import AuthForm from "@/components/AuthForm";
-import axios from "axios";
-import { loginAtom } from "../store/atoms/authAtoms";
-import { useSetAtom } from "jotai";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const login = useSetAtom(loginAtom);
-
   const handleSignIn = async (data: { username: string; password: string }) => {
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signin`,
-        {
-          username: data.username,
-          password: data.password,
-        }
-      );
-      const responseData = response.data;
+      const res = await signIn("credentials", {
+        redirect: false,
+        username: data.username,
+        password: data.password,
+      });
 
-      if (responseData.token) {
-        localStorage.setItem("token", responseData.token);
-        login(responseData.token);
+      if (res?.ok) {
+        toast("Logged in.");
+        router.push("/");
+      } else {
+        toast("Invalid credentials.");
       }
-      router.push("/canvas");
-      toast("Logged in.");
+
+      // if (responseData.token) {
+      //   localStorage.setItem("token", responseData.token);
+      //   login(responseData.token);
+      // }
+      // router.push("/canvas");
     } catch (error) {
       alert("Error while signing in.");
     } finally {

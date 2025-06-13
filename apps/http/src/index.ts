@@ -6,11 +6,13 @@ import userRouter from "./routes/user";
 import canvasRouter from "./routes/canvas";
 import chatRouter from "./routes/chat";
 import cors from 'cors';
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
+app.use(cookieParser());
 
 const allowedOrigins = [
     process.env.CLIENT_ORIGIN!,
