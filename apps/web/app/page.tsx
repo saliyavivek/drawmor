@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/ModeToggle";
-import { useSession } from "next-auth/react";
 
 function Home() {
   const router = useRouter();
@@ -77,8 +76,6 @@ function Home() {
       )}
     </>
   );
-
-  const session = useSession();
 
   return (
     <div className="min-h-screen bg-background">
@@ -168,7 +165,6 @@ function Home() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24 text-center">
-        {JSON.stringify(session)}
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
           Collaborate and Create
           <span className="text-primary block mt-2">
@@ -189,6 +185,17 @@ function Home() {
           >
             Start Drawing Now
           </Button>
+          <button
+            onClick={async () => {
+              await fetch("https://drawmor-http.onrender.com/debug-token", {
+                credentials: "include",
+              })
+                .then((res) => res.json())
+                .then(console.log);
+            }}
+          >
+            debug
+          </button>
           {isLoggedIn && (
             <Button
               size="lg"
