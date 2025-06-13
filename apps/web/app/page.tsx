@@ -108,7 +108,7 @@ function Home() {
               <DropdownMenuContent className="m-1">
                 {isLoggedIn && (
                   <>
-                    <DropdownMenuLabel>{isLoggedIn.username}</DropdownMenuLabel>
+                    <DropdownMenuLabel>{isLoggedIn}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                   </>
                 )}
