@@ -5,6 +5,7 @@ import MainCanvas from "./MainCanvas";
 import { SocketCanvasProps } from "@/types/types";
 import { toast } from "sonner";
 import Loader from "./Loader";
+import { useSession } from "next-auth/react";
 
 export default function SocketCanvas({
   roomId,
@@ -15,9 +16,12 @@ export default function SocketCanvas({
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [users, setUsers] = useState([]);
+  const session = useSession();
 
   useEffect(() => {
-    const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}`);
+    const ws = new WebSocket(
+      `${process.env.NEXT_PUBLIC_WS_URL}?token=${session?.data?.user.backendJWTToken}`
+    );
 
     ws.onopen = () => {
       socketRef.current = ws;

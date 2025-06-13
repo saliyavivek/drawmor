@@ -5,22 +5,10 @@ import express from "express";
 import { WebSocketServer } from "ws";
 import { User } from "./types/types";
 import { handleDrawShape, handleJoinRoom, handleChatMessage, handleUpdateShape, handleleaveRoom } from "./helpers/handlers";
-import cors from "cors";
-import * as cookie from "cookie";
-import { getToken } from "next-auth/jwt";
+import { validateUser } from "./utils/validate";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8080;
-
-const allowedOrigins = [
-    process.env.CLIENT_ORIGIN!,
-    "http://localhost:3000"
-];
-
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
-}));
 
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
@@ -35,42 +23,13 @@ app.get("/ping", (req, res) => {
 });
 
 wss.on("connection", async (socket, req) => {
-    const cookies = cookie.parse(req.headers.cookie || "");
+    const url = req.url;
 
-    const token =
-        cookies["next-auth.session-token"] || cookies["__Secure-next-auth.session-token"];
-
-    if (!token) {
+    if (!url) {
         socket.close();
         return;
     }
-
-    const fakeReq = {
-        headers: req.headers,
-        cookies, // required for getToken to avoid TS error
-    } as unknown as any;
-
-    const decodedToken = await getToken({
-        req: fakeReq,
-        secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!decodedToken) {
-        socket.close();
-        return;
-    }
-
-    const user = {
-        userId: decodedToken.id as string,
-        username: decodedToken.username as string
-    }
-
-    users.push({
-        userId: user.userId,
-        username: user.username,
-        rooms: [],
-        socket
-    })
+    const user = validateUser(url, socket, users);
 
     console.log(`${user!.username} connected`);
 
