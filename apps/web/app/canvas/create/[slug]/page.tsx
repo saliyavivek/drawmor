@@ -23,6 +23,11 @@ export default function Page({
   const token: string | null = useAtomValue(tokenAtom);
 
   useEffect(() => {
+    if (!token) {
+      setError("Please log in or create an account to proceed.");
+      return;
+    }
+
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,7 +35,7 @@ export default function Page({
       try {
         setLoadingMessage("Initializing...");
         setValue(10);
-        await delay(300);
+        await delay(180000);
 
         setLoadingMessage("Extracting canvas name...");
         setValue(30);
@@ -95,14 +100,18 @@ export default function Page({
     };
 
     createRoom();
-  }, [params]);
+  }, [params, token]);
+
+  if (!currUserName) {
+    return <Error backUrl="/signin" error={error} />;
+  }
+
+  if (!roomId) {
+    return <Error backUrl="/canvas" error={error} />;
+  }
 
   if (loading) {
     return <ProgressBar message={loadingMessage} value={value} />;
-  }
-
-  if (!currUserName || !roomId) {
-    return <Error backUrl="/signin" error={error} />;
   }
 
   return (

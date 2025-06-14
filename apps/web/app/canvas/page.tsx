@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,16 +29,8 @@ export default function CanvasSelectionPage() {
 
   const token = useAtomValue(tokenAtom);
 
-  if (!token) {
-    return (
-      <Error
-        backUrl="/signin"
-        error="Please log in or create an account to proceed."
-      />
-    );
-  }
-
   const handleCreateCanvas = () => {
+    if (!token) return;
     setIsCreating(true);
 
     if (!newSlug.trim()) return;
@@ -59,6 +51,8 @@ export default function CanvasSelectionPage() {
   };
 
   const handleJoinCanvas = async () => {
+    if (!token) return;
+
     setIsJoining(true);
 
     if (!canvasSlug.trim()) return;
@@ -88,6 +82,17 @@ export default function CanvasSelectionPage() {
       }
     }
   };
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Error
+          backUrl="/signin"
+          error="Please log in or create an account to proceed."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
