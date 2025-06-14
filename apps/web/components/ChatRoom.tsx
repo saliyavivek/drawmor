@@ -21,6 +21,7 @@ export default function ChatRoom({
   onClose,
   isOpen,
   roomAdmin,
+  token,
 }: ChatRoomProps) {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -42,7 +43,11 @@ export default function ChatRoom({
 
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/${roomId}`,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
       );
 
       const existingMessages = response.data.chats;

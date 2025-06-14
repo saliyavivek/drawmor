@@ -72,14 +72,17 @@ export function setupMouseEvents(
     const onMouseMove = (e: MouseEvent) => {
         const pos = getPosFromEvent(e, canvas);
 
-        if (selectedTool.current === "pointer") {
+        if (selectedTool.current !== "pointer") {
+            canvas.style.cursor = "crosshair";
+        } else {
             const hoveredShape = getClickedShape(shapes, pos.x, pos.y);
             if (hoveredShape) {
                 canvas.style.cursor = "move";
             } else {
-                canvas.style.cursor = "crosshair";
+                canvas.style.cursor = "auto";
             }
         }
+
 
         if (selectedShape && state.isDragging && selectedTool.current === "pointer") {
             if (selectedShape.type === "rectangle" || selectedShape.type === "circle") {
@@ -180,7 +183,6 @@ export function setupMouseEvents(
     canvas.addEventListener("touchmove", onTouchMove);
     canvas.addEventListener("touchend", onTouchEnd);
 
-
     window.addEventListener("mouseup", onMouseUp);
 
     // Return cleanup function
@@ -192,7 +194,6 @@ export function setupMouseEvents(
         canvas.removeEventListener("touchstart", onTouchStart);
         canvas.removeEventListener("touchmove", onTouchMove);
         canvas.removeEventListener("touchend", onTouchEnd);
-
 
         window.removeEventListener("mouseup", onMouseUp);
     };

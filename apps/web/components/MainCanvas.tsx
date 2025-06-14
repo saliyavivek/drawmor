@@ -19,6 +19,7 @@ export default function MainCanvas({
   users,
   currUserName,
   roomAdmin = currUserName,
+  token,
 }: MainCanvasProps) {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
@@ -39,7 +40,15 @@ export default function MainCanvas({
     if (!userId || !canvasRef.current) return;
     const canvas = canvasRef.current;
 
-    initDraw(canvas, socket, roomId, userId, selectedToolRef, isDarkMode);
+    initDraw(
+      canvas,
+      socket,
+      roomId,
+      userId,
+      selectedToolRef,
+      isDarkMode,
+      token
+    );
   }, [socket, roomId, userId, isDarkMode]);
 
   function handleLeave() {
@@ -66,7 +75,7 @@ export default function MainCanvas({
           handleLeave={handleLeave}
           setShowChat={setShowChat}
           roomAdmin={roomAdmin}
-          username={currUserName}
+          currentUsername={currUserName}
         />
         <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2">
           <DrawingToolbar
@@ -93,6 +102,7 @@ export default function MainCanvas({
               onClose={() => setShowChat(false)}
               isOpen={showChat}
               roomAdmin={roomAdmin}
+              token={token}
             />
           </div>
         )}

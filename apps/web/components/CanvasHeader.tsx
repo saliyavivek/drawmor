@@ -21,8 +21,6 @@ import { toast } from "sonner";
 import { InviteDialog } from "./InviteDialog";
 import LeaveRoomDialog from "./LeaveRoomDialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { useAtomValue } from "jotai";
-import { usernameAtom } from "@/app/store/atoms/authAtoms";
 import { ModeToggle } from "./ModeToggle";
 import { useState } from "react";
 
@@ -32,14 +30,14 @@ export default function CanvasHeader({
   handleLeave,
   setShowChat,
   roomAdmin,
-  username,
+  currentUsername,
 }: {
   slug: string;
   users: string[];
   handleLeave: () => void;
   setShowChat: any;
   roomAdmin: string;
-  username: string;
+  currentUsername: string;
 }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
@@ -52,8 +50,6 @@ export default function CanvasHeader({
     navigator.clipboard.writeText(url);
     toast("Link copied to clipboard.");
   };
-
-  const currentUsername = useAtomValue(usernameAtom);
 
   return (
     <>
@@ -89,7 +85,7 @@ export default function CanvasHeader({
                         <p key={index}>
                           {user}
                           {user === currentUsername && " (you)"}
-                          {user === roomAdmin && user !== username
+                          {user === roomAdmin && user !== currentUsername
                             ? " (owner)"
                             : ""}
                         </p>

@@ -4,23 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import MainCanvas from "./MainCanvas";
 import { SocketCanvasProps } from "@/types/types";
 import { toast } from "sonner";
-import Loader from "./Loader";
-import { useSession } from "next-auth/react";
+import Loader from "./ProgressBar";
 
 export default function SocketCanvas({
   roomId,
   slug,
   currUserName,
   roomAdmin,
+  token,
 }: SocketCanvasProps) {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [users, setUsers] = useState([]);
-  const session = useSession();
 
   useEffect(() => {
     const ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_WS_URL}?token=${session?.data?.user.backendJWTToken}`
+      `${process.env.NEXT_PUBLIC_WS_URL}?token=${token}`
     );
 
     ws.onopen = () => {
@@ -71,10 +70,10 @@ export default function SocketCanvas({
         socketRef.current = null;
       }
     };
-  }, [roomId, currUserName]);
+  }, [roomId]);
 
   if (!isConnected || !socketRef.current) {
-    return <Loader message="Connecting to web socket server..." value={95} />;
+    return <Loader message="Connecting to web socket server..." value={100} />;
   }
 
   return (
@@ -86,6 +85,7 @@ export default function SocketCanvas({
         users={users}
         roomAdmin={roomAdmin}
         currUserName={currUserName}
+        token={token}
       />
     </div>
   );

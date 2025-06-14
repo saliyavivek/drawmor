@@ -6,14 +6,11 @@ import userRouter from "./routes/user";
 import canvasRouter from "./routes/canvas";
 import chatRouter from "./routes/chat";
 import cors from 'cors';
-import cookieParser from "cookie-parser";
-import { getToken } from "next-auth/jwt";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cookieParser());
 
 const allowedOrigins = [
     process.env.CLIENT_ORIGIN!,
@@ -24,12 +21,6 @@ app.use(cors({
     origin: allowedOrigins,
     credentials: true
 }));
-
-app.get("/api/debug-token", async (req, res) => {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    res.json({ token });
-});
-
 
 app.use("/api/user", userRouter);
 app.use("/api/canvas", canvasRouter);

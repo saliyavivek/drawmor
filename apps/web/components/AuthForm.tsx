@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Lock, User, Loader2, Github, GithubIcon } from "lucide-react";
+import { Lock, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthFormProps } from "@/types/types";
-import { Separator } from "@/components/ui/separator";
 
 export default function AuthForm({
   mode,
@@ -31,9 +30,6 @@ export default function AuthForm({
 }: AuthFormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [socialLoading, setSocialLoading] = useState<
-    "google" | "github" | null
-  >(null);
 
   // Default values based on mode
   const defaultTitle = mode === "signin" ? "Sign in" : "Create an account";

@@ -24,6 +24,7 @@ export interface SocketCanvasProps {
     slug: string,
     currUserName: string,
     roomAdmin?: string
+    token: string | null
 }
 
 export interface MainCanvasProps {
@@ -33,6 +34,7 @@ export interface MainCanvasProps {
     users: string[],
     roomAdmin?: string
     currUserName: string
+    token: string | null
 }
 
 export type Tool =
@@ -72,4 +74,5 @@ export interface ChatRoomProps {
     onClose: () => void;
     isOpen: boolean;
     roomAdmin: string
+    token: string | null
 }

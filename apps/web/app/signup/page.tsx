@@ -25,18 +25,14 @@ export default function SignUpPage() {
           password: data.password,
         }
       );
+      const responseData = response.data;
 
-      if (response.status === 200) {
-        toast("Signed up.");
-        router.push("/api/auth/signin");
+      if (responseData.token) {
+        localStorage.setItem("token", responseData.token);
+        login(responseData.token);
       }
-
-      // if (responseData.token) {
-      //   localStorage.setItem("token", responseData.token);
-      //   login(responseData.token);
-      // }
-      // router.push("/canvas");
-      // toast("Signed up.");
+      router.push("/canvas");
+      toast("Signed up.");
     } catch (error) {
       alert("Error while signing up.");
     } finally {

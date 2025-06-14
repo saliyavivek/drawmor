@@ -1,8 +1,8 @@
 "use client";
 
-import { usernameAtom } from "@/app/store/atoms/authAtoms";
+import { nameAtom, tokenAtom } from "@/app/store/atoms/authAtoms";
 import Error from "@/components/Error";
-import Loader from "@/components/Loader";
+import ProgressBar from "@/components/ProgressBar";
 import SocketCanvas from "@/components/SocketCanvas";
 import axios from "axios";
 import { useAtomValue } from "jotai";
@@ -17,10 +17,11 @@ export default function Page({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
-  const currUserName = useAtomValue(usernameAtom);
+  const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
   const [roomAdmin, setRoomAdmin] = useState<string>("");
+  const token = useAtomValue(tokenAtom);
 
   useEffect(() => {
     const delay = (ms: number) =>
@@ -39,6 +40,11 @@ export default function Page({
         const resolvedSlug = (await params).slug;
         setSlug(resolvedSlug);
 
+        if (!token) {
+          setError("Authentication token not found.");
+          return;
+        }
+
         setLoadingMessage("Checking our database...");
         setValue(50);
         await delay(300);
@@ -46,7 +52,9 @@ export default function Page({
         const joinResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${resolvedSlug}`,
           {
-            withCredentials: true,
+            headers: {
+              Authorization: token,
+            },
             validateStatus: () => true,
           }
         );
@@ -74,11 +82,11 @@ export default function Page({
         setRoomAdmin(joined.admin);
 
         setLoadingMessage("Finalizing...");
-        setValue(90);
+        setValue(80);
         await delay(200);
 
         await delay(300);
-        setValue(100);
+        setValue(90);
       } catch (e) {
         setError("Something went wrong while creating canvas.");
       } finally {
@@ -91,11 +99,11 @@ export default function Page({
   }, [params]);
 
   if (loading) {
-    return <Loader message={loadingMessage} value={value} />;
+    return <ProgressBar message={loadingMessage} value={value} />;
   }
 
   if (!currUserName || !roomId) {
-    return <Error currUserName={currUserName} error={error} />;
+    return <Error backUrl="/signin" error={error} />;
   }
 
   return (
@@ -104,6 +112,7 @@ export default function Page({
       slug={slug}
       currUserName={currUserName}
       roomAdmin={roomAdmin}
+      token={token}
     />
   );
 }

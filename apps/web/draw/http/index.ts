@@ -1,14 +1,15 @@
 import axios from "axios";
 
-export async function getExistingShapes(roomId: string) {
+export async function getExistingShapes(roomId: string, token: string | null) {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/shapes/${roomId}`, {
-            withCredentials: true
+            headers: {
+                Authorization: token
+            }
         });
         const shapes = response.data.shapes;
 
-        //@ts-ignore
-        const parsedShapes = shapes.map((shape) => {
+        const parsedShapes = shapes.map((shape: any) => {
             const parsedData = JSON.parse(shape.data);
             return {
                 id: shape.id,

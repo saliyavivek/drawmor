@@ -15,6 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Users, ArrowRight, Loader2 } from "lucide-react";
+import { useAtomValue } from "jotai";
+import { tokenAtom } from "../store/atoms/authAtoms";
+import Error from "@/components/Error";
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -23,6 +26,17 @@ export default function CanvasSelectionPage() {
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  const token = useAtomValue(tokenAtom);
+
+  if (!token) {
+    return (
+      <Error
+        backUrl="/signin"
+        error="Please log in or create an account to proceed."
+      />
+    );
+  }
 
   const handleCreateCanvas = () => {
     setIsCreating(true);

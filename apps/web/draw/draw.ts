@@ -11,12 +11,13 @@ export async function initDraw(
     roomId: string,
     userId: string,
     selectedTool: { current: string },
-    isDarkMode: boolean
+    isDarkMode: boolean,
+    token: string | null
 ) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let shapes: Shape[] = await getExistingShapes(roomId);
+    let shapes: Shape[] = await getExistingShapes(roomId, token);
 
     // Setup canvas resizing
     const handleResize = () => {

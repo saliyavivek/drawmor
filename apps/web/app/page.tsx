@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useAtomValue, useSetAtom } from "jotai";
 import { CircleIcon, Share2Icon, UsersIcon, Menu, Github } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { logoutAtom, usernameAtom } from "./store/atoms/authAtoms";
+import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 
 function Home() {
   const router = useRouter();
-  const isLoggedIn = useAtomValue(usernameAtom);
+  const isLoggedIn = useAtomValue(userAtom);
   const link = isLoggedIn ? "/canvas" : "/signin";
   const logout = useSetAtom(logoutAtom);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -108,7 +108,7 @@ function Home() {
               <DropdownMenuContent className="m-1">
                 {isLoggedIn && (
                   <>
-                    <DropdownMenuLabel>{isLoggedIn}</DropdownMenuLabel>
+                    <DropdownMenuLabel>{isLoggedIn.username}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                   </>
                 )}
@@ -185,17 +185,6 @@ function Home() {
           >
             Start Drawing Now
           </Button>
-          <button
-            onClick={async () => {
-              await fetch("https://drawmor-http.onrender.com/api/debug-token", {
-                credentials: "include",
-              })
-                .then((res) => res.json())
-                .then(console.log);
-            }}
-          >
-            debug
-          </button>
           {isLoggedIn && (
             <Button
               size="lg"

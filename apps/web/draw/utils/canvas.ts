@@ -56,4 +56,3 @@ export function getPosFromEvent(e: MouseEvent | TouchEvent, canvas: HTMLCanvasEl
         y: (e as MouseEvent).clientY - rect.top,
     };
 }
-

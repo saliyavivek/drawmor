@@ -1,21 +1,25 @@
 import { NextFunction, Request, Response } from "express";
-import { getToken } from "next-auth/jwt";
+import jwt from "jsonwebtoken";
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
-        const token = await getToken({
-            req,
-            secret: process.env.NEXTAUTH_SECRET,
-        });
+        const token = req.headers.authorization;
 
         if (!token) {
-            res.status(401).json({ message: "Unauthorized" });
+            res.status(411).json({ message: "JWT token is required." });
             return;
         }
 
-        req.userId = token.id as string;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+
+        if (typeof decoded === "string") {
+            res.status(411).json({ message: "Invalid token." });
+            return;
+        }
+
+        req.userId = decoded.userId;
         next();
     } catch (error) {
-        res.status(500).json({ message: "Error while decoding token.", error });
+        res.status(500).json({ message: "Error while decoding JWT token.", error });
     }
-};
+}

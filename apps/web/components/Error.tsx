@@ -1,9 +1,11 @@
 export default function Error({
   currUserName,
   error,
+  backUrl,
 }: {
-  currUserName: string | null;
+  currUserName?: string | null;
   error: string | null;
+  backUrl: string;
 }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white mx-2 dark:bg-black text-center">
@@ -13,7 +15,7 @@ export default function Error({
           : error}
       </p>
       <p className="text-xs sm:text-sm text-gray mt-2">
-        <a href="/canvas" className="underline">
+        <a href={backUrl} className="underline">
           Back
         </a>
       </p>
