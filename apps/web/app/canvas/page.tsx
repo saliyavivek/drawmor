@@ -25,50 +25,85 @@ export default function CanvasSelectionPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
   const token = useAtomValue(tokenAtom);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const validateCanvasName = (name: string): string | null => {
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+      return "Canvas name is required.";
+    }
+
+    if (trimmedName.length < 3) {
+      return "Canvas name must be at least 3 characters long.";
+    }
+
+    if (trimmedName.length > 20) {
+      return "Canvas name must be at most 10 characters long.";
+    }
+
+    // Check for valid characters (alphanumeric, hyphens, underscores)
+    if (!/^[a-zA-Z0-9_-]+$/.test(trimmedName)) {
+      return "Canvas name can only contain letters, numbers, hyphens, and underscores.";
+    }
+
+    return null;
+  };
+
   const handleCreateCanvas = () => {
-    if (!token) return;
+    if (!token || !isInitialized) return;
+
     setIsCreating(true);
 
-    if (!newSlug.trim()) return;
+    const trimmedSlug = newSlug.trim();
+    const validationError = validateCanvasName(trimmedSlug);
 
-    if (newSlug.length < 3 || newSlug.length > 10) {
-      setError(
-        "Canvas name should be atleast 3 and atmost of 10 characters long."
-      );
+    if (validationError) {
+      setError(validationError);
       setIsCreating(false);
       return;
     }
 
     try {
-      router.push(`/canvas/create/${newSlug.trim()}`);
+      router.push(`/canvas/create/${encodeURIComponent(trimmedSlug)}`);
     } catch (error) {
-      setError("Somthing went wrong. Please try again.");
+      console.error("Error navigating to create canvas:", error);
+      setError("Something went wrong while navigating. Please try again.");
+      setIsCreating(false);
     }
   };
 
-  const handleJoinCanvas = async () => {
-    if (!token) return;
+  const handleJoinCanvas = () => {
+    if (!token || !isInitialized) return;
 
     setIsJoining(true);
 
-    if (!canvasSlug.trim()) return;
+    const trimmedSlug = canvasSlug.trim();
+    const validationError = validateCanvasName(trimmedSlug);
 
-    if (canvasSlug.length < 3 || canvasSlug.length > 10) {
-      setError(
-        "Canvas name should be atleast 3 and atmost of 10 characters long."
-      );
+    if (validationError) {
+      setError(validationError);
       setIsJoining(false);
       return;
     }
 
     try {
-      router.push(`/canvas/join/${canvasSlug.trim()}`);
+      router.push(`/canvas/join/${encodeURIComponent(trimmedSlug)}`);
     } catch (error) {
-      setError("Somthing went wrong. Please try again.");
+      console.error("Error navigating to join canvas:", error);
+      setError("Something went wrong while navigating. Please try again.");
+      setIsJoining(false);
     }
   };
 
@@ -83,6 +118,40 @@ export default function CanvasSelectionPage() {
     }
   };
 
+  // Handle input changes with validation
+  const handleNewSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewSlug(value);
+
+    // Clear error if user starts typing
+    if (error) {
+      setError(null);
+    }
+  };
+
+  const handleCanvasSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCanvasSlug(value);
+
+    // Clear error if user starts typing
+    if (error) {
+      setError(null);
+    }
+  };
+
+  // Show loading while waiting for initialization
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle authentication
   if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -104,8 +173,8 @@ export default function CanvasSelectionPage() {
               src="/logo_colored.png"
               alt="Drawmor Logo"
               className="h-24 w-auto border rounded shadow-sm"
-              width={20}
-              height={20}
+              width={96}
+              height={96}
             />
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -113,6 +182,17 @@ export default function CanvasSelectionPage() {
             in real-time.
           </p>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="max-w-3xl mx-auto mb-6">
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+              <p className="text-destructive text-center font-medium">
+                {error}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Canvas Options */}
         <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
@@ -136,19 +216,18 @@ export default function CanvasSelectionPage() {
                 </Label>
                 <Input
                   id="new-slug"
-                  placeholder="Choose a name for your canvas"
+                  placeholder="my-awesome-canvas"
                   value={newSlug}
-                  onChange={(e) => setNewSlug(e.target.value)}
+                  onChange={handleNewSlugChange}
                   onKeyDown={(e) => handleKeyPress(e, "create")}
                   className="text-base py-6"
                   disabled={isCreating}
+                  maxLength={30}
                 />
-                {error && (
-                  <p className="text-sm text-muted-foreground">
-                    Canvas name should be atleast 3 and atmost of 10 characters
-                    long.
-                  </p>
-                )}
+                <p className="text-sm text-muted-foreground">
+                  3-10 characters, letters, numbers, hyphens, and underscores
+                  only.
+                </p>
               </div>
               <Button
                 onClick={handleCreateCanvas}
@@ -183,31 +262,31 @@ export default function CanvasSelectionPage() {
                 Enter canvas name to join an existing collaborative session.
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent className="relative space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="canvas-slug" className="text-base font-medium">
                   Canvas name
                 </Label>
                 <Input
                   id="canvas-slug"
-                  placeholder="Enter canvas name"
+                  placeholder="canvas-name-here"
                   value={canvasSlug}
-                  onChange={(e) => setCanvasSlug(e.target.value)}
+                  onChange={handleCanvasSlugChange}
                   onKeyDown={(e) => handleKeyPress(e, "join")}
                   className="text-base py-6"
                   disabled={isJoining}
+                  maxLength={20}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Ask the canvas creator for the canvas name to join.
+                  Ask the canvas creator for the exact canvas name to join.
                 </p>
               </div>
               <Button
-                type="submit"
-                className="w-full mt-2"
+                onClick={handleJoinCanvas}
+                className="w-full"
                 size="lg"
                 disabled={!canvasSlug.trim() || isJoining}
                 variant="secondary"
-                onClick={handleJoinCanvas}
               >
                 {isJoining ? (
                   <>

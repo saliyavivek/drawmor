@@ -17,6 +17,7 @@ export default function Page({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [slug, setSlug] = useState<string>("");
+  const [isInitialized, setIsInitialized] = useState(false);
   const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
@@ -24,8 +25,25 @@ export default function Page({
   const token = useAtomValue(tokenAtom);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
     if (!token) {
       setError("Please log in or create an account to proceed.");
+      setLoading(false);
+      return;
+    }
+
+    if (!currUserName) {
+      setError("User information not found. Please log in again.");
+      setLoading(false);
       return;
     }
 
@@ -34,6 +52,7 @@ export default function Page({
 
     const joinRoom = async () => {
       try {
+        setError(null);
         setLoadingMessage("Initializing...");
         setValue(10);
         await delay(300);
@@ -45,8 +64,8 @@ export default function Page({
         const resolvedSlug = (await params).slug;
         setSlug(resolvedSlug);
 
-        if (!token) {
-          setError("Authentication token not found.");
+        if (!resolvedSlug || resolvedSlug.trim() === "") {
+          setError("Invalid canvas name provided.");
           return;
         }
 
@@ -55,7 +74,7 @@ export default function Page({
         await delay(300);
 
         const joinResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${resolvedSlug}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${encodeURIComponent(resolvedSlug.trim())}`,
           {
             headers: {
               Authorization: token,
@@ -64,6 +83,7 @@ export default function Page({
           }
         );
 
+        // Handle specific error cases
         if (joinResponse.status === 403) {
           setError(
             `No canvas found with the name '${resolvedSlug}'. Please double-check the name and try again.`
@@ -71,10 +91,13 @@ export default function Page({
           return;
         }
 
+        if (joinResponse.status >= 500) {
+          setError("Server error occurred. Please try again in a few moments.");
+          return;
+        }
+
         if (!joinResponse.data || !joinResponse.data.roomId) {
-          setError(
-            "Unable to join the canvas right now. Please try again shortly."
-          );
+          setError("Invalid response from server. Unable to join the canvas.");
           return;
         }
 
@@ -84,35 +107,57 @@ export default function Page({
 
         const joined = joinResponse.data;
         setRoomId(joined.roomId);
-        setRoomAdmin(joined.admin);
+        setRoomAdmin(joined.admin || ""); // Ensure admin is always a string
 
         setLoadingMessage("Finalizing...");
-        setValue(80);
+        setValue(75);
         await delay(200);
 
+        setValue(80);
         await delay(300);
         setValue(90);
-      } catch (e) {
-        setError("Something went wrong while creating canvas.");
+      } catch (error) {
+        console.error("Error joining canvas:", error);
+
+        if (axios.isAxiosError(error)) {
+          if (error.code === "NETWORK_ERROR" || !error.response) {
+            setError(
+              "Network error. Please check your connection and try again."
+            );
+          } else if (error.response?.status >= 500) {
+            setError("Server error. Please try again later.");
+          }
+        } else {
+          setError("An unexpected error occurred while joining the canvas.");
+        }
       } finally {
-        await delay(300);
         setLoading(false);
       }
     };
 
     joinRoom();
-  }, [params, token]);
+  }, [params, token, currUserName, isInitialized]);
 
-  if (!currUserName) {
-    return <Error backUrl="/signin" error={error} />;
+  if (!isInitialized) {
+    return <ProgressBar message="Loading..." value={5} />;
   }
 
-  if (!roomId) {
+  if (!currUserName || !token) {
+    return (
+      <Error backUrl="/signin" error={error || "Authentication required"} />
+    );
+  }
+
+  if (error && !loading) {
     return <Error backUrl="/canvas" error={error} />;
   }
 
   if (loading) {
     return <ProgressBar message={loadingMessage} value={value} />;
+  }
+
+  if (!roomId) {
+    return <Error backUrl="/canvas" error="Failed to join canvas room" />;
   }
 
   return (

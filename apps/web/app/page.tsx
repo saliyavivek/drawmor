@@ -157,6 +157,14 @@ function Home() {
                     </DropdownMenuItem>
                   </>
                 )}
+                <DropdownMenuItem>
+                  <div className="flex items-center w-full justify-between">
+                    <span className="text-sm">Theme</span>
+                    <span>
+                      <ModeToggle />
+                    </span>
+                  </div>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
