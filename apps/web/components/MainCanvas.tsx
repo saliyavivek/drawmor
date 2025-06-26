@@ -11,6 +11,10 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ChatRoom from "./ChatRoom";
 import { useTheme } from "next-themes";
+import { getPosFromEvent } from "@/draw/utils/canvas";
+import { v4 as uuidv4 } from "uuid";
+import { sendShapeToServer } from "@/draw/utils/websocket";
+import { TextShape } from "@repo/common/types.js";
 
 export default function MainCanvas({
   roomId,
@@ -35,6 +39,15 @@ export default function MainCanvas({
 
   const [showChat, setShowChat] = useState(false);
   // const currentUsername = useAtomValue(nameAtom);
+
+  const [textInput, setTextInput] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    value: string;
+  } | null>(null);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!userId || !canvasRef.current) return;
@@ -64,6 +77,33 @@ export default function MainCanvas({
     toast("You have left the room.");
   }
 
+  const handleDoubleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const pos = getPosFromEvent(e, canvasRef.current!);
+
+    setTextInput({ visible: true, x: pos.x, y: pos.y, value: "" });
+
+    // Focus after showing input (delayed)
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const handleTextSubmit = () => {
+    if (!textInput?.value.trim()) {
+      setTextInput(null);
+      return;
+    }
+
+    const newTextShape: TextShape = {
+      type: "text",
+      x: textInput.x,
+      y: textInput.y,
+      text: textInput.value,
+    };
+
+    sendShapeToServer(socket, roomId, newTextShape, userId!);
+
+    setTextInput(null); // Remove input
+  };
+
   if (!userId) {
     return <div>Loading user...</div>;
   } else {
@@ -87,6 +127,11 @@ export default function MainCanvas({
           <canvas
             ref={canvasRef}
             className={`border h-screen overflow-hidden touch-none ${selectedTool !== "pointer" && "cursor-crosshair"}`}
+            onDoubleClick={(e) => {
+              if (selectedTool === "pointer") {
+                handleDoubleClick(e);
+              }
+            }}
           />
         </div>
         {showChat && (
@@ -105,6 +150,21 @@ export default function MainCanvas({
               token={token}
             />
           </div>
+        )}
+        {textInput?.visible && (
+          <input
+            ref={inputRef}
+            value={textInput.value}
+            onChange={(e) =>
+              setTextInput((prev) => prev && { ...prev, value: e.target.value })
+            }
+            onBlur={handleTextSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleTextSubmit();
+            }}
+            className="absolute text-[16px] p-[2px] border border-0 outline-none z-10"
+            style={{ left: textInput.x, top: 65 + textInput.y }}
+          />
         )}
       </div>
     );

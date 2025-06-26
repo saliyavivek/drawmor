@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useAtomValue, useSetAtom } from "jotai";
-import { CircleIcon, Share2Icon, UsersIcon, Menu, Github } from "lucide-react";
+import { Users, PenTool, MessageSquare, Menu, Github } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logoutAtom, userAtom } from "./store/atoms/authAtoms";
 import { toast } from "sonner";
@@ -76,6 +82,27 @@ function Home() {
       )}
     </>
   );
+
+  const features = [
+    {
+      icon: Users,
+      title: "Real-time Collaboration",
+      description:
+        "Work together seamlessly with your team. See cursors, edits, and changes as they happen.",
+    },
+    {
+      icon: PenTool,
+      title: "Powerful Drawing Tools",
+      description:
+        "Create with rectangles, circles, arrows, and freehand drawing. Everything you need to visualize ideas.",
+    },
+    {
+      icon: MessageSquare,
+      title: "Live Chat",
+      description:
+        "Discuss ideas without leaving the canvas. Built-in chat keeps conversations contextual.",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,7 +200,11 @@ function Home() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24 text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
+        <div className="inline-flex items-center px-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm text-gray-600 mb-8">
+          <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+          <span className="font-semibold">With real-time chat feature</span>
+        </div>
+        <h1 className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
           Collaborate and Create
           <span className="text-primary block mt-2">
             Beautiful Drawings Together
@@ -207,37 +238,40 @@ function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          <Card className="p-4 sm:p-6 text-center md:text-left">
-            <Share2Icon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">
-              Real-time Collaboration
-            </h3>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Draw together in real-time with your team. See changes instantly
-              as they happen.
+      <section className="py-24 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Everything you need to collaborate
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto">
+              Powerful features designed for modern teams who need to think,
+              draw, and create together.
             </p>
-          </Card>
-          <Card className="p-4 sm:p-6 text-center md:text-left">
-            <UsersIcon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">
-              Easy Sharing
-            </h3>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Share your work with a simple link.
-            </p>
-          </Card>
-          <Card className="p-4 sm:p-6 text-center md:text-left">
-            <CircleIcon className="h-10 w-10 sm:h-12 sm:w-12 mb-3 sm:mb-4 text-primary mx-auto md:mx-0" />
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">
-              Intuitive Tools
-            </h3>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Simple yet powerful drawing tools that feel natural and
-              responsive.
-            </p>
-          </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <Card
+                key={index}
+                className="border hover:shadow-lg transition-shadow duration-300"
+              >
+                <CardHeader className="text-center pb-4">
+                  <div className="w-16 h-16 border  rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="h-8 w-8" />
+                  </div>
+                  <CardTitle className="text-xl font-semibold">
+                    {feature.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardDescription className="leading-relaxed">
+                    {feature.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -99,8 +99,8 @@ export function drawArrowhead(rc: RoughCanvas, fromX: number, fromY: number, toX
     const rightX = toX - size * Math.cos(angle + Math.PI / 6);
     const rightY = toY - size * Math.sin(angle + Math.PI / 6);
 
-    rc.line(toX, toY, leftX, leftY, { stroke: isDarkMode ? "#555555" : "#000000" });
-    rc.line(toX, toY, rightX, rightY, { stroke: isDarkMode ? "#555555" : "#000000", });
+    rc.line(toX, toY, leftX, leftY, { stroke: isDarkMode ? "#e6e6e6" : "#000000" });
+    rc.line(toX, toY, rightX, rightY, { stroke: isDarkMode ? "#e6e6e6" : "#000000", });
 }
 
 export function createShape(tool: string, startX: number, startY: number, endX: number, endY: number, assignId: boolean): Shape | null {

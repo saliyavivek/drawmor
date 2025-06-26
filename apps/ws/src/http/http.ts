@@ -1,5 +1,5 @@
 import { prismaClient } from "@repo/db/prisma";
-import { ArrowShape, CircleShape, LineShape, PencilShape, RectangleShape } from "@repo/common/types.js"
+import { ArrowShape, CircleShape, LineShape, PencilShape, RectangleShape, TextShape } from "@repo/common/types.js"
 import { WSMessage } from "../types/types";
 
 export async function insertRectangleInDB(shape: RectangleShape, userId: string, roomId: string) {
@@ -152,5 +152,24 @@ export async function updateCircle(shape: CircleShape) {
         })
     } catch (error) {
         console.error("error while updating circle into db.", error);
+    }
+}
+
+export async function insertTextShapeInDB(shape: TextShape, userId: string, roomId: string) {
+    try {
+        await prismaClient.drawingElement.create({
+            data: {
+                type: "text",
+                data: JSON.stringify({
+                    x: shape.x,
+                    y: shape.y,
+                    text: shape.text
+                }),
+                roomId,
+                userId
+            }
+        })
+    } catch (error) {
+        console.error("error while inserting text shape into db.", error);
     }
 }

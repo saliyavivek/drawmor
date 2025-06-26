@@ -39,4 +39,12 @@ export type ArrowShape = {
     endY: number;
 }
 
-export type Shape = RectangleShape | CircleShape | LineShape | PencilShape | ArrowShape;
+export type TextShape = {
+    id?: string;
+    type: "text",
+    x: number,
+    y: number,
+    text: string,
+}
+
+export type Shape = RectangleShape | CircleShape | LineShape | PencilShape | ArrowShape | TextShape;

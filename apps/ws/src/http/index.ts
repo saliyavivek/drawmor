@@ -1,7 +1,6 @@
 import { broadcastShape, getUsersInRoom } from "../helpers/roomManager";
 import { WSMessage, User, JWT_Payload } from "../types/types";
-import { prismaClient } from "@repo/db/prisma"
-import { insertArrowShapeInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertRectangleInDB, updateCircle, updateRectangle } from "./http";
+import { insertArrowShapeInDB, insertCircleInDB, insertLineInDB, insertPencilShapeInDB, insertRectangleInDB, insertTextShapeInDB, updateCircle, updateRectangle } from "./http";
 
 export async function drawShape(parsedMessage: WSMessage, users: User[], currentUser: JWT_Payload) {
     const shape = JSON.parse(parsedMessage.payload.shape);
@@ -27,6 +26,10 @@ export async function drawShape(parsedMessage: WSMessage, users: User[], current
 
         case "arrow":
             await insertArrowShapeInDB(shape, currentUser.userId, roomId);
+            break;
+
+        case "text":
+            await insertTextShapeInDB(shape, currentUser.userId, roomId);
             break;
 
         default:

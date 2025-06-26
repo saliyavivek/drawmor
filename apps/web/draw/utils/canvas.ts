@@ -39,7 +39,7 @@ export function getMousePos(canvas: HTMLCanvasElement, e: MouseEvent) {
     };
 }
 
-export function getPosFromEvent(e: MouseEvent | TouchEvent, canvas: HTMLCanvasElement): { x: number, y: number } {
+export function getPosFromEvent(e: MouseEvent | TouchEvent | React.MouseEvent<HTMLCanvasElement>, canvas: HTMLCanvasElement): { x: number, y: number } {
     const rect = canvas.getBoundingClientRect();
 
     if (e instanceof TouchEvent) {

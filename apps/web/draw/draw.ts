@@ -31,6 +31,7 @@ export async function initDraw(
     // Setup WebSocket message handling
     socket.onmessage = (ev) => {
         const message = JSON.parse(ev.data);
+        console.log(message);
         handleWebSocketMessage(message, userId, shapes, () => {
             drawAll(canvas, ctx, shapes, isDarkMode);
         });

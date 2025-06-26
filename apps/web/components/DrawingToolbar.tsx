@@ -32,7 +32,7 @@ export default function DrawingToolbar({
     {
       id: "pointer" as Tool,
       icon: MousePointer,
-      label: "Pointer",
+      label: "Selection",
     },
     {
       id: "rectangle" as Tool,
@@ -46,7 +46,12 @@ export default function DrawingToolbar({
   ];
 
   return (
-    <div className={cn("flex items-center justify-center w-full", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center w-full gap-2",
+        className
+      )}
+    >
       <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-xl shadow-lg p-2">
         <TooltipProvider>
           <div className="flex items-center space-x-1">
@@ -78,6 +83,9 @@ export default function DrawingToolbar({
           </div>
         </TooltipProvider>
       </div>
+      <p className="text-xs text-gray-600 font-semibold text-center">
+        Double click anywhere with the selection tool to add text
+      </p>
     </div>
   );
 }

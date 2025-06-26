@@ -8,14 +8,14 @@ export function handleWebSocketMessage(
 ) {
     if (message.type === "draw_shape") {
         // Don't process messages for yourself to avoid duplicates
-        if (message.payload.sender.userId === userId) return;
+        if (message.payload.sender.userId === userId && message.payload.shape.type !== "text") return;
 
         const shapeData = typeof message.payload.shape === 'string'
             ? JSON.parse(message.payload.shape)
             : message.payload.shape;
 
         // Only add valid shapes
-        if (shapeData && (shapeData.type === "rectangle" || shapeData.type === "circle" || shapeData.type === "line" || shapeData.type === "pencil" || shapeData.type === "arrow")) {
+        if (shapeData && (shapeData.type === "rectangle" || shapeData.type === "circle" || shapeData.type === "line" || shapeData.type === "pencil" || shapeData.type === "arrow" || shapeData.type === "text")) {
             shapes.push(shapeData);
             onShapeAdded();
         }
