@@ -204,7 +204,7 @@ function Home() {
           <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
           <span className="font-semibold">With real-time chat feature</span>
         </div>
-        <h1 className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 sm:mb-6">
           Collaborate and Create
           <span className="text-primary block mt-2">
             Beautiful Drawings Together
