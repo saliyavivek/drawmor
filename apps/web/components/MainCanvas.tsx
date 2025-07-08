@@ -24,6 +24,7 @@ export default function MainCanvas({
   currUserName,
   roomAdmin = currUserName,
   token,
+  isPrivate,
 }: MainCanvasProps) {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
@@ -116,6 +117,7 @@ export default function MainCanvas({
           setShowChat={setShowChat}
           roomAdmin={roomAdmin}
           currentUsername={currUserName}
+          isPrivate={isPrivate}
         />
         <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2">
           <DrawingToolbar

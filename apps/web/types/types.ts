@@ -23,8 +23,9 @@ export interface SocketCanvasProps {
     roomId: string,
     slug: string,
     currUserName: string,
-    roomAdmin?: string
-    token: string | null
+    roomAdmin?: string,
+    token: string | null,
+    isPrivate: boolean
 }
 
 export interface MainCanvasProps {
@@ -35,6 +36,7 @@ export interface MainCanvasProps {
     roomAdmin?: string
     currUserName: string
     token: string | null
+    isPrivate: boolean
 }
 
 export type Tool =

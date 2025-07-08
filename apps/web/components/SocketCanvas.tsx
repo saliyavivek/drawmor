@@ -12,6 +12,7 @@ export default function SocketCanvas({
   currUserName,
   roomAdmin,
   token,
+  isPrivate,
 }: SocketCanvasProps) {
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -86,6 +87,7 @@ export default function SocketCanvas({
         roomAdmin={roomAdmin}
         currUserName={currUserName}
         token={token}
+        isPrivate={isPrivate}
       />
     </div>
   );

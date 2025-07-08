@@ -6,6 +6,8 @@ import {
   User,
   Users,
   MoreHorizontal,
+  Globe,
+  Lock,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -14,6 +16,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
@@ -31,6 +34,7 @@ export default function CanvasHeader({
   setShowChat,
   roomAdmin,
   currentUsername,
+  isPrivate,
 }: {
   slug: string;
   users: string[];
@@ -38,6 +42,7 @@ export default function CanvasHeader({
   setShowChat: any;
   roomAdmin: string;
   currentUsername: string;
+  isPrivate: boolean;
 }) {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
@@ -67,9 +72,22 @@ export default function CanvasHeader({
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-semibold text-sm sm:text-base truncate">
+              <h1 className="font-semibold text-sm sm:text-base truncate flex items-center gap-3">
                 {/* <span className="hidden sm:inline">Canvas: </span> */}
-                {slug}
+                <span>{slug}</span>
+                <span>
+                  {isPrivate ? (
+                    <span className="flex items-center gap-1 pt-1 text-muted-foreground">
+                      <Lock className="h-3 w-3" />
+                      <span className="text-xs">Private</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 pt-1 text-muted-foreground">
+                      <Globe className="h-3 w-3" />
+                      <span className="text-xs">Public</span>
+                    </span>
+                  )}
+                </span>
               </h1>
               <div className="flex items-center space-x-2">
                 <Tooltip>
@@ -101,6 +119,40 @@ export default function CanvasHeader({
           <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center space-x-2">
+              {/* <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    {isPrivate ? (
+                      <span className="flex items-center gap-1">
+                        <Lock className="h-4 w-4" />
+                        Private
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <Globe className="h-4 w-4" />
+                        Public
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Make it</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    {isPrivate ? (
+                      <span className="flex items-center gap-1">
+                        <Globe className="h-4 w-4" />
+                        Public
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <Lock className="h-4 w-4" />
+                        Private
+                      </span>
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu> */}
               <Button
                 onClick={() => setShowChat((prev: boolean) => !prev)}
                 variant="outline"
@@ -186,15 +238,6 @@ export default function CanvasHeader({
           </div>
         </div>
       </header>
-
-      {/* Mobile Dialogs */}
-      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-        <InviteDialog handleCopyLink={handleCopyLink} />
-      </Dialog>
-
-      <Dialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>
-        <LeaveRoomDialog handleLeave={handleLeave} />
-      </Dialog>
     </>
   );
 }

@@ -30,6 +30,8 @@ model Room {
   admin           User             @relation(fields: [adminId], references: [id])
   drawingelements DrawingElement[]
   messages        Chat[]
+  isPrivate       Boolean          @default(false)
+  password        String?
 }
 
 model DrawingElement {

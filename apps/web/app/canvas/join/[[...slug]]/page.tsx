@@ -21,9 +21,11 @@ export default function Page({
   const currUserName = useAtomValue(nameAtom);
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
-  const token: string | null = useAtomValue(tokenAtom);
+  const [roomAdmin, setRoomAdmin] = useState<string>("");
+  const token = useAtomValue(tokenAtom);
+  const [password, setPassword] = useState("");
+  const [access, setAccess] = useState("public");
 
-  // Small delay to allow atoms to be initialized
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsInitialized(true);
@@ -50,7 +52,7 @@ export default function Page({
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
-    const createRoom = async () => {
+    const joinRoom = async () => {
       try {
         setError(null);
         setLoadingMessage("Initializing...");
@@ -61,8 +63,18 @@ export default function Page({
         setValue(30);
         await delay(300);
 
-        const resolvedSlug = (await params).slug;
-        setSlug(resolvedSlug);
+        const resolvedParams = (await params).slug;
+
+        const resolvedSlug = resolvedParams[0];
+        setSlug(resolvedSlug!);
+
+        const resolvedAccess = resolvedParams[1];
+        setAccess(resolvedAccess!);
+
+        const resolvedPassword = resolvedParams[2];
+        if (resolvedPassword) {
+          setPassword(resolvedPassword);
+        }
 
         if (!resolvedSlug || resolvedSlug.trim() === "") {
           setError("Invalid canvas name provided.");
@@ -73,9 +85,12 @@ export default function Page({
         setValue(50);
         await delay(300);
 
-        const createResponse = await axios.post(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas`,
-          { name: resolvedSlug.trim() },
+        const joinResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/${encodeURIComponent(resolvedSlug.trim())}`,
+          {
+            password: resolvedPassword ? resolvedPassword.trim() : "",
+            isPrivate: resolvedAccess === "private" ? true : false,
+          },
           {
             headers: {
               Authorization: token,
@@ -84,24 +99,38 @@ export default function Page({
           }
         );
 
-        if (createResponse.status === 403) {
+        // Handle specific error cases
+        if (joinResponse.status === 403) {
           setError(
-            "That canvas name is already in use. Try choosing a unique one."
+            `No canvas found with the name '${resolvedSlug}'. Please double-check the name and try again.`
           );
           return;
         }
 
-        if (createResponse.status >= 500) {
+        if (joinResponse.status === 400) {
+          setError(
+            "The password you've entered is incorrect. Please verify the password and try again."
+          );
+          return;
+        }
+
+        if (joinResponse.status >= 500) {
           setError("Server error occurred. Please try again in a few moments.");
           return;
         }
 
-        setLoadingMessage("Creating new canvas...");
+        if (!joinResponse.data || !joinResponse.data.roomId) {
+          setError("Invalid response from server. Unable to join the canvas.");
+          return;
+        }
+
+        setLoadingMessage("Joining canvas...");
         setValue(70);
         await delay(300);
 
-        const created = createResponse.data;
-        setRoomId(created.roomId);
+        const joined = joinResponse.data;
+        setRoomId(joined.roomId);
+        setRoomAdmin(joined.admin || ""); // Ensure admin is always a string
 
         setLoadingMessage("Finalizing...");
         setValue(75);
@@ -111,9 +140,8 @@ export default function Page({
         await delay(300);
         setValue(90);
       } catch (error) {
-        console.error("Error creating canvas:", error);
+        console.error("Error joining canvas:", error);
 
-        // Handle different types of errors
         if (axios.isAxiosError(error)) {
           if (error.code === "NETWORK_ERROR" || !error.response) {
             setError(
@@ -123,14 +151,14 @@ export default function Page({
             setError("Server error. Please try again later.");
           }
         } else {
-          setError("An unexpected error occurred while creating the canvas.");
+          setError("An unexpected error occurred while joining the canvas.");
         }
       } finally {
         setLoading(false);
       }
     };
 
-    createRoom();
+    joinRoom();
   }, [params, token, currUserName, isInitialized]);
 
   if (!isInitialized) {
@@ -152,7 +180,7 @@ export default function Page({
   }
 
   if (!roomId) {
-    return <Error backUrl="/canvas" error="Failed to create canvas room" />;
+    return <Error backUrl="/canvas" error="Failed to join canvas room" />;
   }
 
   return (
@@ -160,7 +188,9 @@ export default function Page({
       roomId={roomId}
       slug={slug}
       currUserName={currUserName}
+      roomAdmin={roomAdmin}
       token={token}
+      isPrivate={access === "private" ? true : false}
     />
   );
 }

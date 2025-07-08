@@ -14,10 +14,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Users, ArrowRight, Loader2 } from "lucide-react";
+import { Plus, Users, ArrowRight, Loader2, Lock, Globe } from "lucide-react";
 import { useAtomValue } from "jotai";
 import { tokenAtom } from "../store/atoms/authAtoms";
 import Error from "@/components/Error";
+import { Checkbox } from "@/components/ui/checkbox";
+import axios from "axios";
+
+type SuggestedItems = {
+  name: string;
+  isPrivate: boolean;
+};
 
 export default function CanvasSelectionPage() {
   const [canvasSlug, setCanvasSlug] = useState("");
@@ -26,6 +33,14 @@ export default function CanvasSelectionPage() {
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [password, setPassword] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [suggestions, setSuggestions] = useState<SuggestedItems[]>([]);
+  const [skipFetchOnNextUpdate, setSkipFetchOnNextUpdate] = useState(false);
+  const [isSearchedRoomPrivate, setIsSearchedRoomPrivate] = useState(false);
+  const [joinRoomPassword, setJoinRoomPassword] = useState("");
+
   const router = useRouter();
 
   const token = useAtomValue(tokenAtom);
@@ -38,6 +53,47 @@ export default function CanvasSelectionPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (canvasSlug === "") {
+      setSearching(false);
+      return;
+    }
+
+    setSearching(true);
+
+    if (skipFetchOnNextUpdate) {
+      setSkipFetchOnNextUpdate(false); // reset flag
+      setSearching(false);
+    } else {
+      const getData = setTimeout(async () => {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/canvas/search/suggestions?query=${canvasSlug}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+            validateStatus: () => true,
+          }
+        );
+        const data = response.data;
+        // console.log(data);
+        setSuggestions(data);
+
+        setSearching(false);
+      }, 300);
+
+      return () => clearTimeout(getData);
+    }
+  }, [canvasSlug]);
+
+  const handleSelectSuggestion = (item: SuggestedItems) => {
+    setCanvasSlug(item.name);
+    setIsSearchedRoomPrivate(item.isPrivate);
+
+    setSuggestions([]);
+    setSkipFetchOnNextUpdate(true);
+  };
+
   const validateCanvasName = (name: string): string | null => {
     const trimmedName = name.trim();
 
@@ -49,7 +105,7 @@ export default function CanvasSelectionPage() {
       return "Canvas name must be at least 3 characters long.";
     }
 
-    if (trimmedName.length > 20) {
+    if (trimmedName.length > 10) {
       return "Canvas name must be at most 10 characters long.";
     }
 
@@ -76,7 +132,9 @@ export default function CanvasSelectionPage() {
     }
 
     try {
-      router.push(`/canvas/create/${encodeURIComponent(trimmedSlug)}`);
+      router.push(
+        `/canvas/create/${encodeURIComponent(trimmedSlug)}/${isPrivate ? "private" : "public"}/${password}`
+      );
     } catch (error) {
       console.error("Error navigating to create canvas:", error);
       setError("Something went wrong while navigating. Please try again.");
@@ -99,7 +157,9 @@ export default function CanvasSelectionPage() {
     }
 
     try {
-      router.push(`/canvas/join/${encodeURIComponent(trimmedSlug)}`);
+      router.push(
+        `/canvas/join/${encodeURIComponent(trimmedSlug)}/${isSearchedRoomPrivate ? "private" : "public"}/${joinRoomPassword}`
+      );
     } catch (error) {
       console.error("Error navigating to join canvas:", error);
       setError("Something went wrong while navigating. Please try again.");
@@ -222,18 +282,44 @@ export default function CanvasSelectionPage() {
                   onKeyDown={(e) => handleKeyPress(e, "create")}
                   className="text-base py-6"
                   disabled={isCreating}
-                  maxLength={30}
+                  maxLength={10}
                 />
                 <p className="text-sm text-muted-foreground">
                   3-10 characters, letters, numbers, hyphens, and underscores
                   only.
                 </p>
+                <p className="flex items-center gap-1">
+                  <Checkbox
+                    checked={isPrivate}
+                    onCheckedChange={(checked) => {
+                      setIsPrivate(checked === true);
+                    }}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Make room private (password protected)
+                  </span>
+                </p>
+                {isPrivate && (
+                  <Input
+                    id="room-password"
+                    placeholder="my-secret-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => handleKeyPress(e, "create")}
+                    className="text-base py-6"
+                    disabled={isCreating}
+                  />
+                )}
               </div>
               <Button
                 onClick={handleCreateCanvas}
                 className="w-full"
                 size="lg"
-                disabled={!newSlug.trim() || isCreating}
+                disabled={
+                  !newSlug.trim() ||
+                  isCreating ||
+                  (isPrivate && !password.trim())
+                }
               >
                 {isCreating ? (
                   <>
@@ -265,27 +351,70 @@ export default function CanvasSelectionPage() {
             <CardContent className="relative space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="canvas-slug" className="text-base font-medium">
-                  Canvas name
+                  Search Canvas name
                 </Label>
-                <Input
-                  id="canvas-slug"
-                  placeholder="canvas-name-here"
-                  value={canvasSlug}
-                  onChange={handleCanvasSlugChange}
-                  onKeyDown={(e) => handleKeyPress(e, "join")}
-                  className="text-base py-6"
-                  disabled={isJoining}
-                  maxLength={20}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Ask the canvas creator for the exact canvas name to join.
-                </p>
+                <div className="relative flex w-full">
+                  <Input
+                    id="canvas-slug"
+                    placeholder="canvas-name-here"
+                    value={canvasSlug}
+                    onChange={handleCanvasSlugChange}
+                    onKeyDown={(e) => handleKeyPress(e, "join")}
+                    className="text-base py-6 pr-10"
+                    disabled={isJoining}
+                    maxLength={10}
+                  />
+                  {searching && (
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />
+                  )}
+                  {suggestions.length > 0 && (
+                    <div className="absolute top-full mt-1 w-full max-h-30 overflow-auto rounded-md border bg-white shadow-md z-10">
+                      {suggestions.map((item, index) => (
+                        <div
+                          key={index}
+                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm flex justify-between items-center"
+                          onClick={() => handleSelectSuggestion(item)}
+                        >
+                          <span>{item.name}</span>
+                          <span>
+                            {item.isPrivate ? (
+                              <Lock className="h-4 w-4" />
+                            ) : (
+                              <Globe className="h-4 w-4" />
+                            )}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {isSearchedRoomPrivate && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      This canvas is password-protected. Please enter the
+                      password to proceed.
+                    </p>
+                    <Input
+                      placeholder="room-password"
+                      value={joinRoomPassword}
+                      onChange={(e) => setJoinRoomPassword(e.target.value)}
+                      onKeyDown={(e) => handleKeyPress(e, "join")}
+                      className="text-base py-6"
+                      disabled={isJoining}
+                    />
+                  </div>
+                )}
               </div>
               <Button
                 onClick={handleJoinCanvas}
                 className="w-full"
                 size="lg"
-                disabled={!canvasSlug.trim() || isJoining}
+                disabled={
+                  !canvasSlug.trim() ||
+                  isJoining ||
+                  (isSearchedRoomPrivate && !joinRoomPassword.trim())
+                }
                 variant="secondary"
               >
                 {isJoining ? (
