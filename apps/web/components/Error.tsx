@@ -1,5 +1,4 @@
 export default function Error({
-  currUserName,
   error,
   backUrl,
 }: {

@@ -22,7 +22,6 @@ export default function Page({
   const [loadingMessage, setLoadingMessage] = useState("Initializing...");
   const [value, setValue] = useState(0);
   const token: string | null = useAtomValue(tokenAtom);
-  const [password, setPassword] = useState("");
   const [access, setAccess] = useState("public");
 
   // Small delay to allow atoms to be initialized

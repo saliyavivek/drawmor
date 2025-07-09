@@ -72,9 +72,6 @@ export default function Page({
         setAccess(resolvedAccess!);
 
         const resolvedPassword = resolvedParams[2];
-        if (resolvedPassword) {
-          setPassword(resolvedPassword);
-        }
 
         if (!resolvedSlug || resolvedSlug.trim() === "") {
           setError("Invalid canvas name provided.");
