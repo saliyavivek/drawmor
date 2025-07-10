@@ -20,6 +20,12 @@ import { tokenAtom } from "../store/atoms/authAtoms";
 import Error from "@/components/Error";
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from "unique-names-generator";
 
 type SuggestedItems = {
   name: string;
@@ -105,8 +111,8 @@ export default function CanvasSelectionPage() {
       return "Canvas name must be at least 3 characters long.";
     }
 
-    if (trimmedName.length > 10) {
-      return "Canvas name must be at most 10 characters long.";
+    if (trimmedName.length > 20) {
+      return "Canvas name must be at most 20 characters long.";
     }
 
     // Check for valid characters (alphanumeric, hyphens, underscores)
@@ -223,6 +229,15 @@ export default function CanvasSelectionPage() {
     );
   }
 
+  function generateCanvasName() {
+    const randomName = uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+      separator: "-",
+      length: 2,
+    });
+    setNewSlug(randomName);
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
@@ -274,18 +289,28 @@ export default function CanvasSelectionPage() {
                 <Label htmlFor="new-slug" className="text-base font-medium">
                   Name your canvas
                 </Label>
-                <Input
-                  id="new-slug"
-                  placeholder="my-awesome-canvas"
-                  value={newSlug}
-                  onChange={handleNewSlugChange}
-                  onKeyDown={(e) => handleKeyPress(e, "create")}
-                  className="text-base py-6"
-                  disabled={isCreating}
-                  maxLength={10}
-                />
+                <div className="relative flex w-full">
+                  <Input
+                    id="new-slug"
+                    placeholder="my-awesome-canvas"
+                    value={newSlug}
+                    onChange={handleNewSlugChange}
+                    onKeyDown={(e) => handleKeyPress(e, "create")}
+                    className="text-base py-6"
+                    disabled={isCreating}
+                    maxLength={10}
+                  />
+                  <Button
+                    onClick={generateCanvasName}
+                    size={"sm"}
+                    variant={"outline"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    Generate
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground">
-                  3-10 characters, letters, numbers, hyphens, and underscores
+                  3-20 characters, letters, numbers, hyphens, and underscores
                   only.
                 </p>
                 <p className="flex items-center gap-1">
@@ -351,7 +376,7 @@ export default function CanvasSelectionPage() {
             <CardContent className="relative space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="canvas-slug" className="text-base font-medium">
-                  Search Canvas name
+                  Search canvas name
                 </Label>
                 <div className="relative flex w-full">
                   <Input
@@ -368,7 +393,7 @@ export default function CanvasSelectionPage() {
                     <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-muted-foreground" />
                   )}
                   {suggestions.length > 0 && (
-                    <div className="absolute top-full mt-1 w-full max-h-30 overflow-auto rounded-md border bg-white shadow-md z-10">
+                    <div className="absolute top-full mt-1 w-full max-h-30 overflow-auto rounded-md border shadow-md">
                       {suggestions.map((item, index) => (
                         <div
                           key={index}
@@ -406,29 +431,31 @@ export default function CanvasSelectionPage() {
                   </div>
                 )}
               </div>
-              <Button
-                onClick={handleJoinCanvas}
-                className="w-full"
-                size="lg"
-                disabled={
-                  !canvasSlug.trim() ||
-                  isJoining ||
-                  (isSearchedRoomPrivate && !joinRoomPassword.trim())
-                }
-                variant="secondary"
-              >
-                {isJoining ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Joining...
-                  </>
-                ) : (
-                  <>
-                    Join Canvas
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
+              {suggestions.length <= 0 && (
+                <Button
+                  onClick={handleJoinCanvas}
+                  className="w-full"
+                  size="lg"
+                  disabled={
+                    !canvasSlug.trim() ||
+                    isJoining ||
+                    (isSearchedRoomPrivate && !joinRoomPassword.trim())
+                  }
+                  variant="secondary"
+                >
+                  {isJoining ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    <>
+                      Join Canvas
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
