@@ -7,7 +7,7 @@
 
 A real-time collaborative whiteboard application that allows multiple users to sketch, draw shapes, and chat simultaneously. Built with a modern monorepo architecture using **TypeScript**, **Next.js**, **Express**, **WebSocket**, and **PostgreSQL**.
 
-## 🌟 Features
+## Features
 
 ### Drawing & Collaboration
 
@@ -35,7 +35,7 @@ A real-time collaborative whiteboard application that allows multiple users to s
 - **JWT-based Auth**: Secure token-based authentication for API requests
 - **Password Hashing**: Bcrypt for secure password storage
 
-## 📦 Project Structure
+## Project Structure
 
 This is a **pnpm monorepo** using **Turbo** for task orchestration.
 
@@ -141,7 +141,7 @@ drawmor/
         └── package.json
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Tech Stack
 
@@ -263,7 +263,7 @@ interface Shape {
   └─────────────┘
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -328,9 +328,9 @@ pnpm dev
 
 This will start:
 
-- 🌐 Web frontend: `http://localhost:3000`
-- 🔗 HTTP API: `http://localhost:3001`
-- 🔌 WebSocket server: `ws://localhost:8080`
+- Web frontend: `http://localhost:3000`
+- HTTP API: `http://localhost:3001`
+- WebSocket server: `ws://localhost:8080`
 
 **Build for production:**
 
@@ -351,7 +351,7 @@ cd apps/ws && pnpm start
 cd apps/web && pnpm start
 ```
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Authentication (`/api/user`)
 
@@ -378,7 +378,7 @@ cd apps/web && pnpm start
 
 - GET/POST endpoints for chat message management
 
-## 🔌 WebSocket Events
+## WebSocket Events
 
 The WebSocket server handles real-time collaboration:
 
@@ -396,7 +396,7 @@ The WebSocket server handles real-time collaboration:
 - Chat messages broadcast to all room participants
 - User presence updates when users join/leave
 
-## 📝 Development Workflow
+## Development Workflow
 
 ### Running Linting
 
@@ -424,7 +424,7 @@ Turbo automatically caches build outputs. To clear cache:
 pnpm turbo cache clean
 ```
 
-## 🔐 Security Features
+## Security Features
 
 - **JWT Authentication**: Secure token-based user authentication
 - **Password Hashing**: Bcrypt for secure password storage
@@ -433,7 +433,7 @@ pnpm turbo cache clean
 - **Type Safety**: Full TypeScript coverage prevents runtime errors
 - **Validation**: Zod schemas for runtime data validation
 
-## 🎨 UI Components
+## UI Components
 
 The project uses **Shadcn UI** (based on Radix UI) components including:
 
@@ -445,7 +445,7 @@ The project uses **Shadcn UI** (based on Radix UI) components including:
 
 Custom theme support with light/dark mode toggle.
 
-## 📚 Key Libraries & Dependencies
+## Key Libraries & Dependencies
 
 | Library     | Use Case         | Version      |
 | ----------- | ---------------- | ------------ |
@@ -460,7 +460,7 @@ Custom theme support with light/dark mode toggle.
 | tailwindcss | Styling          | ^4.1.8       |
 | typescript  | Type safety      | 5.8.2        |
 
-## 🔄 Monorepo Commands
+## Monorepo Commands
 
 Monorepo is managed with Turbo for parallel task execution:
 
@@ -481,11 +481,11 @@ pnpm turbo run check-types
 pnpm turbo run build --force
 ```
 
-## 📄 License
+## License
 
 ISC
 
-## 🙋 Support
+## Support
 
 For questions or issues, please create a GitHub issue with:
 
@@ -493,7 +493,7 @@ For questions or issues, please create a GitHub issue with:
 - Steps to reproduce
 - Expected vs. actual behavior
 
-## 🔗 Related Links
+## Related Links
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Express.js Guide](https://expressjs.com/)
@@ -504,4 +504,4 @@ For questions or issues, please create a GitHub issue with:
 
 ---
 
-**Built with ❤️ using TypeScript, React, and Express.js**
+**Built with ❤️ on Earth!**
