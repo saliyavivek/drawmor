@@ -7,7 +7,8 @@
 
 A real-time collaborative whiteboard application that allows multiple users to sketch, draw shapes, and chat simultaneously. Built with a modern monorepo architecture using **TypeScript**, **Next.js**, **Express**, **WebSocket**, and **PostgreSQL**.
 
-[Watch Demo](https://lnkd.in/p/gzRxmNXm)
+### Watch Demo
+https://github.com/user-attachments/assets/b88df5fc-0ebd-427d-b4ca-6d718a5effe9
 
 ## Features
 
